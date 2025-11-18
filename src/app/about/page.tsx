@@ -1,8 +1,9 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Linkedin, Twitter } from 'lucide-react';
+import Link from 'next/link';
 
 const teamMembers = [
     {
@@ -40,9 +41,8 @@ export default function AboutUsPage() {
             <Image
             src="https://picsum.photos/seed/about-hero/1920/1080"
             alt="SynergySphere Office"
-            layout="fill"
-            objectFit="cover"
-            className="z-0"
+            fill
+            className="z-0 object-cover"
             data-ai-hint="modern office"
             />
             <div className="absolute inset-0 bg-primary/70 z-10" />

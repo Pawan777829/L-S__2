@@ -51,11 +51,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   
   // Merge local cart to firestore cart on login
   useEffect(() => {
-    if (user && localCartItems.length > 0) {
-      const batch = writeBatch(firestore);
+    if (user && firestore && localCartItems.length > 0) {
       const userCartRef = collection(firestore, 'users', user.uid, 'cart');
 
       getDocs(userCartRef).then(snapshot => {
+        const batch = writeBatch(firestore);
         const firestoreItems = snapshot.docs.map(d => ({...d.data(), id: d.id})) as CartItem[];
 
         localCartItems.forEach(localItem => {
@@ -65,7 +65,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
             batch.update(docRef, { quantity: existingItem.quantity + localItem.quantity });
           } else {
             const docRef = doc(userCartRef);
-            batch.set(docRef, { product: localItem.product, quantity: localItem.quantity });
+            // Ensure product is a plain object for Firestore
+            const plainProduct = JSON.parse(JSON.stringify(localItem.product));
+            batch.set(docRef, { product: plainProduct, quantity: localItem.quantity });
           }
         });
         
@@ -85,7 +87,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const docRef = doc(cartCollectionRef, existingItem.id);
         updateDocumentNonBlocking(docRef, { quantity: existingItem.quantity + quantity });
       } else {
-        addDocumentNonBlocking(cartCollectionRef, { product, quantity });
+        // Ensure product is a plain object for Firestore
+        const plainProduct = JSON.parse(JSON.stringify(product));
+        addDocumentNonBlocking(cartCollectionRef, { product: plainProduct, quantity });
       }
     } else {
       setLocalCartItems(prevItems => {
@@ -141,7 +145,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const clearCart = () => {
-    if (user && cartCollectionRef) {
+    if (user && cartCollectionRef && firestore) {
       const batch = writeBatch(firestore);
       cartItems.forEach(item => {
         const docRef = doc(cartCollectionRef, item.id);

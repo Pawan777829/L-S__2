@@ -19,7 +19,8 @@ function CartItem({ item }: { item: CartItemType }) {
         <Image
           src={item.product.image.src}
           alt={item.product.image.alt}
-          fill
+          width={96}
+          height={96}
           className="object-cover"
         />
       </div>
@@ -45,65 +46,69 @@ function CartItem({ item }: { item: CartItemType }) {
   );
 }
 
+function CartLoader() {
+ return (
+    <div className="container mx-auto px-4 py-12">
+      <h1 className="text-4xl font-bold mb-8 font-headline">Your Cart</h1>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-8 w-32" />
+            </CardHeader>
+            <CardContent>
+              <div className="divide-y">
+                {[...Array(2)].map((_, i) => (
+                  <div key={i} className="flex items-center gap-4 py-4">
+                    <Skeleton className="h-24 w-24 rounded-md" />
+                    <div className="flex-grow space-y-2">
+                      <Skeleton className="h-5 w-48" />
+                      <Skeleton className="h-4 w-24" />
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-9 w-20" />
+                        <Skeleton className="h-9 w-9" />
+                      </div>
+                    </div>
+                    <Skeleton className="h-6 w-20" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Order Summary</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between">
+                <Skeleton className="h-5 w-20" />
+                <Skeleton className="h-5 w-24" />
+              </div>
+              <div className="flex justify-between">
+                <Skeleton className="h-5 w-24" />
+                <Skeleton className="h-5 w-16" />
+              </div>
+              <Separator />
+              <div className="flex justify-between font-bold text-lg">
+                <Skeleton className="h-6 w-16" />
+                <Skeleton className="h-6 w-28" />
+              </div>
+              <Skeleton className="h-12 w-full" />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function CartPage() {
   const { cartItems, cartTotal, cartCount, isLoading } = useCart();
 
   if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-12">
-        <h1 className="text-4xl font-bold mb-8 font-headline">Your Cart</h1>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <Skeleton className="h-8 w-32" />
-              </CardHeader>
-              <CardContent>
-                <div className="divide-y">
-                  {[...Array(2)].map((_, i) => (
-                    <div key={i} className="flex items-center gap-4 py-4">
-                      <Skeleton className="h-24 w-24 rounded-md" />
-                      <div className="flex-grow space-y-2">
-                        <Skeleton className="h-5 w-48" />
-                        <Skeleton className="h-4 w-24" />
-                        <div className="flex items-center gap-2">
-                          <Skeleton className="h-9 w-20" />
-                          <Skeleton className="h-9 w-9" />
-                        </div>
-                      </div>
-                      <Skeleton className="h-6 w-20" />
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          <div>
-            <Card>
-              <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between">
-                  <Skeleton className="h-5 w-20" />
-                  <Skeleton className="h-5 w-24" />
-                </div>
-                <div className="flex justify-between">
-                  <Skeleton className="h-5 w-24" />
-                  <Skeleton className="h-5 w-16" />
-                </div>
-                <Separator />
-                <div className="flex justify-between font-bold text-lg">
-                  <Skeleton className="h-6 w-16" />
-                  <Skeleton className="h-6 w-28" />
-                </div>
-                <Skeleton className="h-12 w-full" />
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    );
+    return <CartLoader />;
   }
 
   if (cartCount === 0) {
@@ -131,7 +136,7 @@ export default function CartPage() {
             <CardContent>
               <div className="divide-y">
                 {cartItems.map(item => (
-                  <CartItem key={item.product.id} item={item} />
+                  <CartItem key={item.id} item={item} />
                 ))}
               </div>
             </CardContent>

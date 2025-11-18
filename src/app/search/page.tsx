@@ -60,7 +60,7 @@ function SearchResults() {
             <div className="flex gap-4 p-4">
               <div className="w-24 h-24 relative flex-shrink-0">
                  {result.imageUrl ? (
-                    <Image src="https://picsum.photos/seed/search/200" alt={result.title} layout="fill" objectFit="cover" className="rounded-md" />
+                    <Image src={'https://picsum.photos/seed/search/200'} alt={result.title} fill objectFit="cover" className="rounded-md" />
                   ) : (
                     <div className="w-full h-full bg-secondary rounded-md flex items-center justify-center">
                        {result.type === 'product' ? <ShoppingBag className="w-8 h-8 text-muted-foreground"/> : <GraduationCap className="w-8 h-8 text-muted-foreground"/>}
