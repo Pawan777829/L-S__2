@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -12,6 +13,17 @@ import CourseCard from '@/components/shared/course-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useUser } from '@/firebase';
+import { useState } from 'react';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const curriculum = [
     { title: "Introduction", details: "1 video (12 min)", locked: false },
@@ -54,10 +66,11 @@ export default function CoursePage() {
   const relatedCourses = getCourses().filter(c => c.id !== id).slice(0, 2);
 
   const { addToCart } = useCart();
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   const handleEnroll = () => {
     if (!user) {
-      router.push('/login');
+      setShowLoginDialog(true);
     } else if (course) {
       addToCart(course, 'course');
     }
@@ -163,6 +176,23 @@ export default function CoursePage() {
         </div>
       </div>
 
+      {/* Login Dialog */}
+      <AlertDialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+                <AlertDialogTitle>Login Required</AlertDialogTitle>
+                <AlertDialogDescription>
+                    You need to be logged in to enroll in a course. Please log in or create an account to continue.
+                </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => router.push('/login')}>Login</AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+
       {/* Related Courses Section */}
       <section className="py-16 bg-secondary/50">
         <div className="container mx-auto px-4">
@@ -178,5 +208,3 @@ export default function CoursePage() {
     </div>
   );
 }
-
-    
