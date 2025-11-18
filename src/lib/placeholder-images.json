@@ -1,3 +1,100 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "prod-img-1",
+      "description": "Modern ergonomic chair",
+      "imageUrl": "https://images.unsplash.com/photo-1594235048794-fae8583a5af5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZXJnb25vbWljJTIwY2hhaXJ8ZW58MHx8fHwxNzYzMzg4MjI4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ergonomic chair"
+    },
+    {
+      "id": "prod-img-2",
+      "description": "Wireless mechanical keyboard",
+      "imageUrl": "https://images.unsplash.com/photo-1558050032-160f36233a07?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtZWNoYW5pY2FsJTIwa2V5Ym9hcmR8ZW58MHx8fHwxNzYzNDQwMTc3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mechanical keyboard"
+    },
+    {
+      "id": "prod-img-3",
+      "description": "4K Ultra HD monitor",
+      "imageUrl": "https://images.unsplash.com/photo-1426024120108-99cc76989c71?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjb21wdXRlciUyMG1vbml0b3J8ZW58MHx8fHwxNzYzNDExNTI2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "computer monitor"
+    },
+    {
+      "id": "prod-img-4",
+      "description": "Noise-cancelling headphones",
+      "imageUrl": "https://images.unsplash.com/photo-1583394838336-acd977736f90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxoZWFkcGhvbmVzfGVufDB8fHx8MTc2MzM1ODc0OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "headphones"
+    },
+    {
+      "id": "prod-img-5",
+      "description": "Smart home hub",
+      "imageUrl": "https://images.unsplash.com/photo-1519558260268-cde7e03a0152?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzbWFydCUyMGhvbWV8ZW58MHx8fHwxNzYzMzkyODA4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "smart home"
+    },
+    {
+      "id": "prod-img-6",
+      "description": "Portable power bank",
+      "imageUrl": "https://images.unsplash.com/photo-1644571669391-c0b48363abed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cG93ZXIlMjBiYW5rfGVufDB8fHx8MTc2MzM3MDU1N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "power bank"
+    },
+    {
+      "id": "prod-img-7",
+      "description": "Adjustable standing desk",
+      "imageUrl": "https://images.unsplash.com/photo-1622579522120-85a1669d76b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3RhbmRpbmclMjBkZXNrfGVufDB8fHx8MTc2MzM2NTk5Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "standing desk"
+    },
+    {
+      "id": "prod-img-8",
+      "description": "Webcam with ring light",
+      "imageUrl": "https://images.unsplash.com/photo-1726127461372-547b9ffa4236?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx3ZWJjYW18ZW58MHx8fHwxNzYzMzgzNjM0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "webcam"
+    },
+    {
+      "id": "course-img-1",
+      "description": "Introduction to Web Development",
+      "imageUrl": "https://images.unsplash.com/photo-1569693799105-4eb645d89aea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjb2RpbmclMjBsYXB0b3B8ZW58MHx8fHwxNzYzNDI4NzcxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "coding laptop"
+    },
+    {
+      "id": "course-img-2",
+      "description": "Advanced React Patterns",
+      "imageUrl": "https://images.unsplash.com/photo-1653387300291-bfa1eeb90e16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZWFjdCUyMGNvZGV8ZW58MHx8fHwxNzYzNDQyMDc5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "react code"
+    },
+    {
+      "id": "course-img-3",
+      "description": "Digital Marketing Masterclass",
+      "imageUrl": "https://images.unsplash.com/photo-1639389016237-85a1a16f76d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYXJrZXRpbmclMjBjaGFydHxlbnwwfHx8fDE3NjMzNjY5MDJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "marketing chart"
+    },
+    {
+      "id": "course-img-4",
+      "description": "Graphic Design for Beginners",
+      "imageUrl": "https://images.unsplash.com/photo-1700887944225-f148dd124305?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkZXNpZ24lMjB0b29sc3xlbnwwfHx8fDE3NjMzNTA4MzR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "design tools"
+    },
+    {
+      "id": "course-img-5",
+      "description": "AI and Machine Learning Fundamentals",
+      "imageUrl": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhaSUyMGJyYWlufGVufDB8fHx8MTc2MzM4NTcyMnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "ai brain"
+    },
+    {
+      "id": "course-img-6",
+      "description": "Project Management Professional (PMP) Prep",
+      "imageUrl": "https://images.unsplash.com/photo-1743385779347-1549dabf1320?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwcm9qZWN0JTIwcGxhbnxlbnwwfHx8fDE3NjM0NDM1OTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "project plan"
+    },
+    {
+      "id": "course-img-7",
+      "description": "The Art of Public Speaking",
+      "imageUrl": "https://images.unsplash.com/photo-1709377274134-94ff067f4d0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cHVibGljJTIwc3BlYWtpbmd8ZW58MHx8fHwxNzYzNDQyNzQ2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "public speaking"
+    },
+    {
+      "id": "course-img-8",
+      "description": "Financial Planning for Millennials",
+      "imageUrl": "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxmaW5hbmNpYWwlMjBwbGFubmluZ3xlbnwwfHx8fDE3NjMzNTQxNTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "financial planning"
+    }
+  ]
 }
