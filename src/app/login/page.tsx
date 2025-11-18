@@ -42,6 +42,7 @@ export default function LoginPage() {
 
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!auth) return;
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({

@@ -10,12 +10,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Logo } from '@/components/layout/logo';
-import { useAuth, useUser } from '@/firebase';
+import { useAuth, useUser, useFirestore } from '@/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect } from 'react';
 import { doc, setDoc } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -46,6 +45,8 @@ export default function SignupPage() {
   }, [user, isUserLoading, router]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!auth || !firestore) return;
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
@@ -60,8 +61,8 @@ export default function SignupPage() {
       const userRef = doc(firestore, 'users', user.uid);
       await setDoc(userRef, {
         id: user.uid,
-        firstName: firstName,
-        lastName: lastName,
+        firstName: firstName || '',
+        lastName: lastName || '',
         email: values.email,
         registrationDate: new Date().toISOString(),
       });
