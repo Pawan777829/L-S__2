@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { getCourseById, getCourses, Course } from '@/lib/placeholder-data';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import { ShoppingCart, Star, Clock, BookOpen, User, CheckCircle } from 'lucide-r
 import CourseCard from '@/components/shared/course-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { useUser } from '@/firebase';
 
 const curriculum = [
     { title: "Introduction", details: "1 video (12 min)", locked: false },
@@ -46,11 +47,22 @@ function CoursePageLoader() {
 
 export default function CoursePage() {
   const params = useParams();
+  const router = useRouter();
+  const { user } = useUser();
   const { id } = params;
   const course = getCourseById(id as string);
   const relatedCourses = getCourses().filter(c => c.id !== id).slice(0, 2);
 
   const { addToCart } = useCart();
+
+  const handleEnroll = () => {
+    if (!user) {
+      router.push('/login');
+    } else if (course) {
+      addToCart(course, 'course');
+    }
+  };
+
 
   if (!course) {
     return <CoursePageLoader />;
@@ -132,10 +144,10 @@ export default function CoursePage() {
                     <p className="text-4xl font-bold font-headline">${course.price.toFixed(2)}</p>
                 </CardHeader>
                 <CardContent>
-                    <Button size="lg" onClick={() => addToCart(course, 'course')} className="w-full">
+                    <Button size="lg" onClick={handleEnroll} className="w-full">
                         Enroll Now
                     </Button>
-                     <Button size="lg" variant="outline" className="w-full mt-2">
+                     <Button size="lg" variant="outline" onClick={handleEnroll} className="w-full mt-2">
                         Add to Cart
                     </Button>
                     <p className="text-xs text-muted-foreground text-center mt-2">30-Day Money-Back Guarantee</p>
@@ -166,3 +178,5 @@ export default function CoursePage() {
     </div>
   );
 }
+
+    

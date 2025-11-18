@@ -65,6 +65,7 @@ export default function SignupPage() {
         lastName: lastName || '',
         email: values.email,
         registrationDate: new Date().toISOString(),
+        role: 'learner', // Assign default role
       });
 
 
@@ -160,3 +161,5 @@ export default function SignupPage() {
     </div>
   );
 }
+
+    

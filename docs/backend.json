@@ -27,6 +27,11 @@
           "type": "string",
           "description": "Date and time the user registered.",
           "format": "date-time"
+        },
+        "role": {
+          "type": "string",
+          "description": "The role of the user, e.g., 'learner' or 'vendor'.",
+          "enum": ["learner", "vendor"]
         }
       },
       "required": [
@@ -34,7 +39,8 @@
         "firstName",
         "lastName",
         "email",
-        "registrationDate"
+        "registrationDate",
+        "role"
       ]
     },
     "Vendor": {

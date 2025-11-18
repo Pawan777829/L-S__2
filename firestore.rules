@@ -31,6 +31,10 @@ service cloud.firestore {
     function isOwner(userId) {
       return request.auth.uid == userId;
     }
+    
+    function isLearner(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data.role == 'learner';
+    }
 
     function isExistingOwner(userId) {
       return isSignedIn() && isOwner(userId) && resource != null;
@@ -59,7 +63,8 @@ service cloud.firestore {
     }
 
     match /users/{userId}/cart/{cartItemId} {
-      allow read, write: if isSignedIn() && isOwner(userId);
+      allow read: if isSignedIn() && isOwner(userId);
+      allow write: if isSignedIn() && isOwner(userId) && isLearner(userId);
     }
 
     match /users/{userId}/orders/{orderId} {
@@ -73,4 +78,5 @@ service cloud.firestore {
     }
   }
 }
+    
     
