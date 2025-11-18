@@ -11,9 +11,9 @@ export function Footer() {
           <div className="col-span-2 md:col-span-1">
             <h3 className="font-semibold mb-4 text-foreground font-headline">ABOUT</h3>
             <ul className="space-y-3">
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground">Contact Us</Link></li>
+              <li><Link href="/contact" className="text-muted-foreground hover:text-foreground">Contact Us</Link></li>
               <li><Link href="/about" className="text-muted-foreground hover:text-foreground">About Us</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground">Careers</Link></li>
+              <li><Link href="/careers" className="text-muted-foreground hover:text-foreground">Careers</Link></li>
               <li><Link href="/vendor/dashboard" className="text-muted-foreground hover:text-foreground">Become a Vendor</Link></li>
             </ul>
           </div>
@@ -30,9 +30,9 @@ export function Footer() {
              <h3 className="font-semibold mb-4 text-foreground font-headline">POLICY</h3>
             <ul className="space-y-3">
               <li><Link href="#" className="text-muted-foreground hover:text-foreground">Return Policy</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground">Terms Of Use</Link></li>
+              <li><Link href="/terms" className="text-muted-foreground hover:text-foreground">Terms Of Use</Link></li>
               <li><Link href="#" className="text-muted-foreground hover:text-foreground">Security</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground">Privacy</Link></li>
+              <li><Link href="/privacy" className="text-muted-foreground hover:text-foreground">Privacy</Link></li>
             </ul>
           </div>
           <div className="col-span-2 md:col-span-1">
