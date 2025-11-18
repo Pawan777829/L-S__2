@@ -23,10 +23,10 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col group overflow-hidden">
       <CardHeader className="p-0">
-        <Link href={`/products/${product.id}`}>
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-lg">
+        <Link href={`/products/${product.id}`} className="block overflow-hidden">
+          <div className="relative aspect-[4/3] w-full">
             <Image
               src={product.image.src}
               alt={product.image.alt}
@@ -38,8 +38,10 @@ export default function ProductCard({ product }: ProductCardProps) {
         </Link>
       </CardHeader>
       <CardContent className="p-4 flex-grow">
-        <CardTitle>{product.name}</CardTitle>
-        <CardDescription className="mt-2 text-sm text-muted-foreground">
+        <Link href={`/products/${product.id}`} className="hover:underline">
+          <CardTitle className="text-base">{product.name}</CardTitle>
+        </Link>
+        <CardDescription className="mt-1 text-sm text-muted-foreground">
           By {product.vendor}
         </CardDescription>
       </CardContent>
