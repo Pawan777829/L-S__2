@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import type { Product } from './placeholder-data';
+import type { Product, Course } from './placeholder-data';
 import { useToast } from '@/hooks/use-toast';
 import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, doc, getDocs, writeBatch } from 'firebase/firestore';
@@ -15,15 +15,16 @@ import { useCollection } from '@/firebase/firestore/use-collection';
 
 export type CartItem = {
   id: string;
-  product: Product;
+  item: Product | Course;
+  type: 'product' | 'course';
   quantity: number;
 };
 
 type CartContextType = {
   cartItems: CartItem[];
-  addToCart: (product: Product, quantity?: number) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  addToCart: (item: Product | Course, type: 'product' | 'course', quantity?: number) => void;
+  removeFromCart: (itemId: string) => void;
+  updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
   cartCount: number;
   cartTotal: number;
@@ -59,15 +60,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const firestoreItems = snapshot.docs.map(d => ({...d.data(), id: d.id})) as CartItem[];
 
         localCartItems.forEach(localItem => {
-          const existingItem = firestoreItems.find(item => item.product.id === localItem.product.id);
+          const existingItem = firestoreItems.find(item => item.item.id === localItem.item.id);
           if (existingItem) {
             const docRef = doc(userCartRef, existingItem.id);
             batch.update(docRef, { quantity: existingItem.quantity + localItem.quantity });
           } else {
             const docRef = doc(userCartRef);
-            // Ensure product is a plain object for Firestore
-            const plainProduct = JSON.parse(JSON.stringify(localItem.product));
-            batch.set(docRef, { product: plainProduct, quantity: localItem.quantity });
+            const plainItem = JSON.parse(JSON.stringify(localItem.item));
+            batch.set(docRef, { item: plainItem, quantity: localItem.quantity, type: localItem.type });
           }
         });
         
@@ -79,56 +79,54 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [user, firestore, localCartItems]);
 
 
-  const addToCart = (product: Product, quantity: number = 1) => {
-    const existingItem = cartItems.find(item => item.product.id === product.id);
+  const addToCart = (itemToAdd: Product | Course, type: 'product' | 'course', quantity: number = 1) => {
+    const existingItem = cartItems.find(item => item.item.id === itemToAdd.id);
 
     if (user && cartCollectionRef) {
       if (existingItem) {
         const docRef = doc(cartCollectionRef, existingItem.id);
         updateDocumentNonBlocking(docRef, { quantity: existingItem.quantity + quantity });
       } else {
-        // Ensure product is a plain object for Firestore
-        const plainProduct = JSON.parse(JSON.stringify(product));
-        addDocumentNonBlocking(cartCollectionRef, { product: plainProduct, quantity });
+        const plainItem = JSON.parse(JSON.stringify(itemToAdd));
+        addDocumentNonBlocking(cartCollectionRef, { item: plainItem, type, quantity });
       }
     } else {
       setLocalCartItems(prevItems => {
         if (existingItem) {
           return prevItems.map(item =>
-            item.product.id === product.id
+            item.item.id === itemToAdd.id
               ? { ...item, quantity: item.quantity + quantity }
               : item
           );
         }
-        // Firestore will add the id, for local we just use product id
-        return [...prevItems, { id: product.id, product, quantity }];
+        return [...prevItems, { id: itemToAdd.id, item: itemToAdd, type, quantity }];
       });
     }
 
     toast({
       title: "Added to cart",
-      description: `${product.name} has been added to your cart.`,
+      description: `${itemToAdd.name} has been added to your cart.`,
     });
   };
 
-  const removeFromCart = (productId: string) => {
-    const itemToRemove = cartItems.find(item => item.product.id === productId);
+  const removeFromCart = (itemId: string) => {
+    const itemToRemove = cartItems.find(item => item.item.id === itemId);
     if (!itemToRemove) return;
     
     if (user && cartCollectionRef) {
         const docRef = doc(cartCollectionRef, itemToRemove.id);
         deleteDocumentNonBlocking(docRef);
     } else {
-        setLocalCartItems(prevItems => prevItems.filter(item => item.product.id !== productId));
+        setLocalCartItems(prevItems => prevItems.filter(item => item.item.id !== itemId));
     }
   };
 
-  const updateQuantity = (productId: string, quantity: number) => {
-    const itemToUpdate = cartItems.find(item => item.product.id === productId);
+  const updateQuantity = (itemId: string, quantity: number) => {
+    const itemToUpdate = cartItems.find(item => item.item.id === itemId);
     if (!itemToUpdate) return;
     
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(itemId);
       return;
     }
 
@@ -138,7 +136,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } else {
         setLocalCartItems(prevItems =>
             prevItems.map(item =>
-                item.product.id === productId ? { ...item, quantity } : item
+                item.item.id === itemId ? { ...item, quantity } : item
             )
         );
     }
@@ -158,7 +156,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
-  const cartTotal = cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0);
+  const cartTotal = cartItems.reduce((total, item) => total + item.item.price * item.quantity, 0);
 
   const value = {
     cartItems,

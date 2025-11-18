@@ -89,7 +89,7 @@ export default function ProductPage() {
                 <p className="text-sm text-green-600 font-semibold mt-1">Special price</p>
             </div>
 
-            <Button size="lg" onClick={() => addToCart(product)} className="w-full md:w-auto">
+            <Button size="lg" onClick={() => addToCart(product, 'product')} className="w-full md:w-auto">
               <ShoppingCart className="mr-2" /> Add to Cart
             </Button>
 

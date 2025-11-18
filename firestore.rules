@@ -10,8 +10,7 @@
  * - Vendors: /vendors/{vendorId}
  * - Products: /products/{productId}
  * - Courses: /courses/{courseId}
- * - Cart: /users/{userId}/cart
- * - Cart Items: /users/{userId}/cart/cartItems/{cartItemId}
+ * - Cart: /users/{userId}/cart/{cartItemId}
  * - Orders: /users/{userId}/orders/{orderId}
  * - Enrollments: /users/{userId}/enrollments/{enrollmentId}
  *
