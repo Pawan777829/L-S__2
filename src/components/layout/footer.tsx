@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Logo } from './logo';
 import { Facebook, Twitter, Youtube } from 'lucide-react';
@@ -11,7 +12,7 @@ export function Footer() {
             <h3 className="font-semibold mb-4 text-foreground font-headline">ABOUT</h3>
             <ul className="space-y-3">
               <li><Link href="#" className="text-muted-foreground hover:text-foreground">Contact Us</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-foreground">About Us</Link></li>
+              <li><Link href="/about" className="text-muted-foreground hover:text-foreground">About Us</Link></li>
               <li><Link href="#" className="text-muted-foreground hover:text-foreground">Careers</Link></li>
               <li><Link href="/vendor/dashboard" className="text-muted-foreground hover:text-foreground">Become a Vendor</Link></li>
             </ul>
