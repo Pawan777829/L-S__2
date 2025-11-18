@@ -2,7 +2,7 @@
  * @fileoverview Firestore Security Rules for SynergySphere.
  *
  * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for user profiles and cart data,
+ * This ruleset enforces a strict user-ownership model for user profiles, cart data, orders, and enrollments,
  * while allowing public read access to product, course, and vendor information.
  *
  * Data Structure:
@@ -12,144 +12,66 @@
  * - Courses: /courses/{courseId}
  * - Cart: /users/{userId}/cart
  * - Cart Items: /users/{userId}/cart/cartItems/{cartItemId}
+ * - Orders: /users/{userId}/orders/{orderId}
+ * - Enrollments: /users/{userId}/enrollments/{enrollmentId}
  *
  * Key Security Decisions:
- * - Users can only access their own user documents and cart data.
- * - Product, Course, and Vendor information is publicly readable but requires backend management for creation, updates, and deletion (not implemented in these rules).
+ * - Users can only access their own user documents and related data (cart, orders, enrollments).
+ * - Product, Course, and Vendor information is publicly readable but requires backend management for CUD operations.
  * - All write operations are validated against the authenticated user's ID.
- *
- * Denormalization for Authorization:
- * - User-specific data (cart) is nested under /users/{userId}, making authorization rules straightforward.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    /**
-     * @description Manages user profile data.
-     * @path /users/{userId}
-     * @allow (create) - User with ID 'user123' can create their own profile.
-     *    request.auth.uid == 'user123' && request.resource.data.id == 'user123'
-     * @allow (get) - User with ID 'user123' can read their own profile.
-     *    request.auth.uid == 'user123'
-     * @allow (update) - User with ID 'user123' can update their own profile.
-     *    request.auth.uid == 'user123'
-     * @allow (delete) - User with ID 'user123' can delete their own profile.
-     *    request.auth.uid == 'user123'
-     * @deny (create) - User with ID 'user456' cannot create a profile for user 'user123'.
-     *    request.auth.uid == 'user456' && request.resource.data.id == 'user123'
-     * @principle Enforces document ownership for writes.
-     */
-    match /users/{userId} {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if false; // Listing users is not permitted.
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    /**
-     * @description Manages vendor profile data.
-     * @path /vendors/{vendorId}
-     * @allow (get) - Anyone can read vendor profiles.
-     * @allow (list) - Anyone can list vendor profiles.
-     * @deny (create) - No one can create vendor profiles through client-side rules.
-     * @deny (update) - No one can update vendor profiles through client-side rules.
-     * @deny (delete) - No one can delete vendor profiles through client-side rules.
-     * @principle Allows public read access, restricts write access.
-     */
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isExistingOwner(userId) {
+      return isSignedIn() && isOwner(userId) && resource != null;
+    }
+
+    match /users/{userId} {
+      allow get, update: if isSignedIn() && isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
+      allow delete: if isSignedIn() && isOwner(userId);
+      allow list: if false; 
+    }
+
     match /vendors/{vendorId} {
       allow get, list: if true;
-      allow create, update, delete: if false; // Only backend can manage vendors.
+      allow create, update, delete: if false; 
     }
 
-    /**
-     * @description Manages product data.
-     * @path /products/{productId}
-     * @allow (get) - Anyone can read product information.
-     * @allow (list) - Anyone can list products.
-     * @deny (create) - No one can create products through client-side rules.
-     * @deny (update) - No one can update products through client-side rules.
-     * @deny (delete) - No one can delete products through client-side rules.
-     * @principle Allows public read access, restricts write access.
-     */
     match /products/{productId} {
       allow get, list: if true;
-      allow create, update, delete: if false; // Only backend can manage products.
+      allow create, update, delete: if false;
     }
 
-    /**
-     * @description Manages course data.
-     * @path /courses/{courseId}
-     * @allow (get) - Anyone can read course information.
-     * @allow (list) - Anyone can list courses.
-     * @deny (create) - No one can create courses through client-side rules.
-     * @deny (update) - No one can update courses through client-side rules.
-     * @deny (delete) - No one can delete courses through client-side rules.
-     * @principle Allows public read access, restricts write access.
-     */
     match /courses/{courseId} {
       allow get, list: if true;
-      allow create, update, delete: if false; // Only backend can manage courses.
+      allow create, update, delete: if false;
     }
 
-    /**
-     * @description Manages user's shopping cart.
-     * @path /users/{userId}/cart
-     * @allow (create) - User with ID 'user123' can create their own cart.
-     *    request.auth.uid == 'user123' && request.resource.data.userId == 'user123'
-     * @allow (get) - User with ID 'user123' can read their own cart.
-     *    request.auth.uid == 'user123'
-     * @allow (update) - User with ID 'user123' can update their own cart.
-     *    request.auth.uid == 'user123'
-     * @allow (delete) - User with ID 'user123' can delete their own cart.
-     *    request.auth.uid == 'user123'
-     * @deny (create) - User with ID 'user456' cannot create a cart for user 'user123'.
-     *    request.auth.uid == 'user456' && request.resource.data.userId == 'user123'
-     * @principle Enforces document ownership for writes.
-     */
-    match /users/{userId}/cart {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if false; // Only one cart per user, no listing needed.
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isSignedIn() && isExistingOwner(userId) && request.resource.data.userId == userId;
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+    match /users/{userId}/cart/{cartItemId} {
+      allow read, write: if isSignedIn() && isOwner(userId);
     }
 
-    /**
-     * @description Manages individual cart items for a user's cart.
-     * @path /users/{userId}/cart/cartItems/{cartItemId}
-     * @allow (create) - User with ID 'user123' can create a cart item in their own cart.
-     *    request.auth.uid == 'user123'
-     * @allow (get) - User with ID 'user123' can read a cart item in their own cart.
-     *    request.auth.uid == 'user123'
-     * @allow (update) - User with ID 'user123' can update a cart item in their own cart.
-     *    request.auth.uid == 'user123'
-     * @allow (delete) - User with ID 'user123' can delete a cart item in their own cart.
-     *    request.auth.uid == 'user123'
-     * @deny (create) - User with ID 'user456' cannot create a cart item in user 'user123's cart.
-     *    request.auth.uid == 'user456'
-     * @principle Enforces document ownership for writes.
-     */
-    match /users/{userId}/cart/cartItems/{cartItemId} {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isExistingOwner(userId);
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+    match /users/{userId}/orders/{orderId} {
+      allow read: if isSignedIn() && isOwner(userId);
+      allow create, update, delete: if false; // Orders managed by backend/functions
     }
-  }
 
-  // Helper functions
-  function isSignedIn() {
-    return request.auth != null;
-  }
-
-  function isOwner(userId) {
-    return request.auth.uid == userId;
-  }
-
-  function isExistingOwner(userId) {
-    return isSignedIn() && isOwner(userId) && resource != null;
+    match /users/{userId}/enrollments/{enrollmentId} {
+      allow read: if isSignedIn() && isOwner(userId);
+      allow create, update, delete: if false; // Enrollments managed by backend/functions
+    }
   }
 }
+    

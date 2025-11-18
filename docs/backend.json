@@ -210,6 +210,34 @@
         "cartId",
         "quantity"
       ]
+    },
+    "Order": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Order",
+      "description": "Represents a customer order.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique ID for the order." },
+        "userId": { "type": "string", "description": "The ID of the user who placed the order." },
+        "date": { "type": "string", "format": "date-time", "description": "When the order was placed." },
+        "status": { "type": "string", "enum": ["Processing", "Shipped", "Delivered", "Cancelled"] },
+        "total": { "type": "number", "description": "The total cost of the order." }
+      },
+      "required": ["id", "userId", "date", "status", "total"]
+    },
+    "Enrollment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Enrollment",
+      "description": "Links a user to a course they are enrolled in.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string", "description": "The ID of the user." },
+        "courseId": { "type": "string", "description": "The ID of the course." },
+        "progress": { "type": "number", "description": "The user's progress in the course (0-100)." },
+        "enrolledDate": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "courseId", "progress", "enrolledDate"]
     }
   },
   "auth": {
@@ -319,8 +347,49 @@
             }
           ]
         }
+      },
+      {
+        "path": "/users/{userId}/orders/{orderId}",
+        "definition": {
+          "entityName": "Order",
+          "schema": {
+            "$ref": "#/backend/entities/Order"
+          },
+          "description": "Stores user's order history. Path-based ownership ensures only the user can access their order data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "orderId",
+              "description": "The unique identifier for the order."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/enrollments/{enrollmentId}",
+        "definition": {
+          "entityName": "Enrollment",
+          "schema": {
+            "$ref": "#/backend/entities/Enrollment"
+          },
+          "description": "Stores user's course enrollments. Path-based ownership ensures only the user can access their enrollment data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "enrollmentId",
+              "description": "The unique identifier for the enrollment."
+            }
+          ]
+        }
       }
     ],
-    "reasoning": "The Firestore data structure is designed to support the SynergySphere platform, focusing on e-commerce and learning portal functionalities. It emphasizes authorization independence and efficient data retrieval. User data is stored under `/users/{userId}`. Vendors, Products, and Courses are structured to facilitate vendor management and product/course listings. The shopping cart functionality is implemented using `/users/{userId}/cart` and `/users/{userId}/cart/cartItems/{cartItemId}` to ensure user-specific cart data. \n\n**Authorization Independence:**\n\n*   User-specific data (cart) is nested under `/users/{userId}`, making authorization rules straightforward (only the user can access their cart).\n\n**QAPs (Rules are not Filters):**\n\n*   **Secure List Operations:** The structure enables secure list operations for products and courses. Anyone should be able to list the available products or courses; Thus, they are not nested under user paths. If specific vendor access controls are needed for listing their own products/courses, consider a separate `/vendors/{vendorId}/products` and `/vendors/{vendorId}/courses` structure.\n\n**Vendors, Products and Courses**\n*   Vendors collection contains vendor profile data.\n*   Products are stored in the `/products` collection and contain a `vendorId` to link back to the vendor.\n*   Courses are stored in the `/courses` collection and contain a `vendorId` to link back to the vendor.\n\n**Cart**\n*   Cart exists under `/users/{userId}/cart` since only the user should be able to access their cart.\n*   Cart items exist under `/users/{userId}/cart/cartItems/{cartItemId}`\n\n**Authentication:**\n*   Authentication handled by Firebase Authentication using email/password and anonymous sign-in.\n"
+    "reasoning": "The Firestore data structure is designed to support the SynergySphere platform, focusing on e-commerce and learning portal functionalities. It emphasizes authorization independence and efficient data retrieval. User data is stored under `/users/{userId}`. Vendors, Products, and Courses are structured to facilitate vendor management and product/course listings. The shopping cart functionality is implemented using `/users/{userId}/cart` and `/users/{userId}/cart/cartItems/{cartItemId}` to ensure user-specific cart data. \n\n**Authorization Independence:**\n\n*   User-specific data (cart, orders, enrollments) is nested under `/users/{userId}`, making authorization rules straightforward (only the user can access their data).\n\n**QAPs (Rules are not Filters):**\n\n*   **Secure List Operations:** The structure enables secure list operations for products and courses. Anyone should be able to list the available products or courses; Thus, they are not nested under user paths. If specific vendor access controls are needed for listing their own products/courses, consider a separate `/vendors/{vendorId}/products` and `/vendors/{vendorId}/courses` structure.\n\n**Vendors, Products and Courses**\n*   Vendors collection contains vendor profile data.\n*   Products are stored in the `/products` collection and contain a `vendorId` to link back to the vendor.\n*   Courses are stored in the `/courses` collection and contain a `vendorId` to link back to the vendor.\n\n**Cart, Orders, and Enrollments**\n*   Cart exists under `/users/{userId}/cart` since only the user should be able to access their cart.\n*   Cart items exist under `/users/{userId}/cart/cartItems/{cartItemId}`\n*   Orders are under `/users/{userId}/orders`.\n*   Enrollments are under `/users/{userId}/enrollments`.\n\n**Authentication:**\n*   Authentication handled by Firebase Authentication using email/password and anonymous sign-in.\n"
   }
 }
+    
