@@ -20,7 +20,7 @@ import {
 import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
-import { User as UserIcon, LogOut, LayoutDashboard, ShoppingCart, GraduationCap, User as ProfileIcon } from 'lucide-react';
+import { User as UserIcon, LogOut, LayoutDashboard, ShoppingCart, GraduationCap, User as ProfileIcon, LogIn, UserPlus } from 'lucide-react';
 
 
 function UserNav() {
@@ -52,11 +52,29 @@ function UserNav() {
 
   if (!user) {
     return (
-       <Button asChild>
-          <Link href="/login">
-            <UserIcon className="mr-2 h-4 w-4" /> Login
-          </Link>
-        </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+           <Button variant="ghost" size="icon">
+            <UserIcon className="h-5 w-5" />
+            <span className="sr-only">Open user menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56" align="end" forceMount>
+           <DropdownMenuItem onClick={() => router.push('/login')}>
+            <LogIn className="mr-2 h-4 w-4" />
+            <span>Login</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push('/signup')}>
+            <UserPlus className="mr-2 h-4 w-4" />
+            <span>Sign Up</span>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+           <DropdownMenuItem onClick={() => router.push('/vendor/dashboard')}>
+            <LayoutDashboard className="mr-2 h-4 w-4" />
+            <span>Become a Vendor</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     );
   }
 
