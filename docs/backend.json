@@ -1,0 +1,326 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the SynergySphere platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user entity."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First name of the user."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name of the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the user.",
+          "format": "email"
+        },
+        "registrationDate": {
+          "type": "string",
+          "description": "Date and time the user registered.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "registrationDate"
+      ]
+    },
+    "Vendor": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Vendor",
+      "type": "object",
+      "description": "Represents a vendor on the SynergySphere platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the vendor entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the vendor."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the vendor."
+        },
+        "contactEmail": {
+          "type": "string",
+          "description": "Contact email address for the vendor.",
+          "format": "email"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "contactEmail"
+      ]
+    },
+    "Product": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Product",
+      "type": "object",
+      "description": "Represents a product listed on the SynergySphere platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the product entity."
+        },
+        "vendorId": {
+          "type": "string",
+          "description": "Reference to Vendor. (Relationship: Vendor 1:N Product)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the product."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the product."
+        },
+        "price": {
+          "type": "number",
+          "description": "Price of the product."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the product image.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "vendorId",
+        "name",
+        "description",
+        "price",
+        "imageUrl"
+      ]
+    },
+    "Course": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Course",
+      "type": "object",
+      "description": "Represents a course listed on the SynergySphere platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the course entity."
+        },
+        "vendorId": {
+          "type": "string",
+          "description": "Reference to Vendor. (Relationship: Vendor 1:N Course)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the course."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the course."
+        },
+        "price": {
+          "type": "number",
+          "description": "Price of the course."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the course image.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "vendorId",
+        "name",
+        "description",
+        "price",
+        "imageUrl"
+      ]
+    },
+    "Cart": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Cart",
+      "type": "object",
+      "description": "Represents a user's shopping cart.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the cart entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 Cart)"
+        },
+        "cartItems": {
+          "type": "array",
+          "description": "A list of cart items.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "cartItems"
+      ]
+    },
+    "CartItem": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "CartItem",
+      "type": "object",
+      "description": "Represents a single item in the cart.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the cart item entity."
+        },
+        "cartId": {
+          "type": "string",
+          "description": "Reference to Cart. (Relationship: Cart 1:N CartItem)"
+        },
+        "productId": {
+          "type": "string",
+          "description": "Reference to Product. (Relationship: Product 1:N CartItem) If it is a product."
+        },
+        "courseId": {
+          "type": "string",
+          "description": "Reference to Course. (Relationship: Course 1:N CartItem) If it is a course."
+        },
+        "quantity": {
+          "type": "number",
+          "description": "Quantity of the item in the cart."
+        }
+      },
+      "required": [
+        "id",
+        "cartId",
+        "quantity"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profile information. Path-based ownership ensures only the user can access their data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/vendors/{vendorId}",
+        "definition": {
+          "entityName": "Vendor",
+          "schema": {
+            "$ref": "#/backend/entities/Vendor"
+          },
+          "description": "Stores vendor profile information.",
+          "params": [
+            {
+              "name": "vendorId",
+              "description": "The unique identifier for the vendor."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/products/{productId}",
+        "definition": {
+          "entityName": "Product",
+          "schema": {
+            "$ref": "#/backend/entities/Product"
+          },
+          "description": "Stores product information.",
+          "params": [
+            {
+              "name": "productId",
+              "description": "The unique identifier for the product."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/courses/{courseId}",
+        "definition": {
+          "entityName": "Course",
+          "schema": {
+            "$ref": "#/backend/entities/Course"
+          },
+          "description": "Stores course information.",
+          "params": [
+            {
+              "name": "courseId",
+              "description": "The unique identifier for the course."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/cart",
+        "definition": {
+          "entityName": "Cart",
+          "schema": {
+            "$ref": "#/backend/entities/Cart"
+          },
+          "description": "Stores user's cart information. Path-based ownership ensures only the user can access their cart data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/cart/cartItems/{cartItemId}",
+        "definition": {
+          "entityName": "CartItem",
+          "schema": {
+            "$ref": "#/backend/entities/CartItem"
+          },
+          "description": "Stores individual cart items for a user's cart. Path-based ownership ensures only the user can access their cart data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "cartItemId",
+              "description": "The unique identifier for the cart item."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to support the SynergySphere platform, focusing on e-commerce and learning portal functionalities. It emphasizes authorization independence and efficient data retrieval. User data is stored under `/users/{userId}`. Vendors, Products, and Courses are structured to facilitate vendor management and product/course listings. The shopping cart functionality is implemented using `/users/{userId}/cart` and `/users/{userId}/cart/cartItems/{cartItemId}` to ensure user-specific cart data. \n\n**Authorization Independence:**\n\n*   User-specific data (cart) is nested under `/users/{userId}`, making authorization rules straightforward (only the user can access their cart).\n\n**QAPs (Rules are not Filters):**\n\n*   **Secure List Operations:** The structure enables secure list operations for products and courses. Anyone should be able to list the available products or courses; Thus, they are not nested under user paths. If specific vendor access controls are needed for listing their own products/courses, consider a separate `/vendors/{vendorId}/products` and `/vendors/{vendorId}/courses` structure.\n\n**Vendors, Products and Courses**\n*   Vendors collection contains vendor profile data.\n*   Products are stored in the `/products` collection and contain a `vendorId` to link back to the vendor.\n*   Courses are stored in the `/courses` collection and contain a `vendorId` to link back to the vendor.\n\n**Cart**\n*   Cart exists under `/users/{userId}/cart` since only the user should be able to access their cart.\n*   Cart items exist under `/users/{userId}/cart/cartItems/{cartItemId}`\n\n**Authentication:**\n*   Authentication handled by Firebase Authentication using email/password and anonymous sign-in.\n"
+  }
+}
