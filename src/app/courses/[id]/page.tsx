@@ -154,7 +154,7 @@ export default function CoursePage() {
           <div className="sticky top-24">
             <Card className="shadow-2xl">
                  <CardHeader>
-                    <p className="text-4xl font-bold font-headline">${course.price.toFixed(2)}</p>
+                    <p className="text-4xl font-bold font-headline">₹{course.price.toFixed(2)}</p>
                 </CardHeader>
                 <CardContent>
                     <Button size="lg" onClick={handleEnroll} className="w-full">

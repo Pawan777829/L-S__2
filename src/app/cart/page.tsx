@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -29,7 +30,7 @@ function CartItem({ item }: { item: CartItemType }) {
          <Link href={linkHref}>
           <h3 className="font-semibold hover:underline">{item.item.name}</h3>
         </Link>
-        <p className="text-sm text-muted-foreground">${item.item.price.toFixed(2)}</p>
+        <p className="text-sm text-muted-foreground">₹{item.item.price.toFixed(2)}</p>
         <div className="mt-2 flex items-center gap-2">
           <Input
             type="number"
@@ -44,7 +45,7 @@ function CartItem({ item }: { item: CartItemType }) {
           </Button>
         </div>
       </div>
-      <p className="font-semibold">${(item.item.price * item.quantity).toFixed(2)}</p>
+      <p className="font-semibold">₹{(item.item.price * item.quantity).toFixed(2)}</p>
     </div>
   );
 }
@@ -153,7 +154,7 @@ export default function CartPage() {
             <CardContent className="space-y-4">
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal</span>
-                <span>${cartTotal.toFixed(2)}</span>
+                <span>₹{cartTotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-muted-foreground">
                 <span>Shipping & Taxes</span>
@@ -162,7 +163,7 @@ export default function CartPage() {
               <Separator />
               <div className="flex justify-between font-bold text-lg">
                 <span>Total</span>
-                <span>${cartTotal.toFixed(2)}</span>
+                <span>₹{cartTotal.toFixed(2)}</span>
               </div>
               <Button className="w-full" size="lg" asChild>
                 <Link href="/checkout">Proceed to Checkout</Link>

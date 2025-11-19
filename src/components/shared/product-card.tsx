@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -46,7 +47,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </CardDescription>
       </CardContent>
       <CardFooter className="p-4 flex justify-between items-center">
-        <p className="font-semibold text-lg">${product.price.toFixed(2)}</p>
+        <p className="font-semibold text-lg">₹{product.price.toFixed(2)}</p>
         <Button size="sm" onClick={() => addToCart(product, 'product')}>
           <ShoppingCart className="mr-2 h-4 w-4" />
           Add to cart

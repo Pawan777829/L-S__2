@@ -85,7 +85,7 @@ export default function ProductPage() {
             <Separator />
             
             <div>
-                <p className="text-4xl font-bold font-headline">${product.price.toFixed(2)}</p>
+                <p className="text-4xl font-bold font-headline">₹{product.price.toFixed(2)}</p>
                 <p className="text-sm text-green-600 font-semibold mt-1">Special price</p>
             </div>
 

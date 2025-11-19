@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -115,7 +116,7 @@ export default function OrdersPage() {
                         {order.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-right">${order.total.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">₹{order.total.toFixed(2)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -134,4 +135,3 @@ export default function OrdersPage() {
     </div>
   );
 }
-    

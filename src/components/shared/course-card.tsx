@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -39,7 +40,7 @@ export default function CourseCard({ course }: CourseCardProps) {
         </CardDescription>
       </CardContent>
       <CardFooter className="p-4 flex justify-between items-center">
-        <p className="font-semibold text-lg">${course.price.toFixed(2)}</p>
+        <p className="font-semibold text-lg">₹{course.price.toFixed(2)}</p>
         <Button size="sm" variant="outline" asChild>
           <Link href={`/courses/${course.id}`}>
             View Course
