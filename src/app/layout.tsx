@@ -5,6 +5,7 @@ import { Footer } from '@/components/layout/footer';
 import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/lib/cart-context';
 import { FirebaseClientProvider } from '@/firebase';
+import Chatbot from '@/components/shared/chatbot';
 
 export const metadata: Metadata = {
   title: 'SynergySphere - Unified Commerce and Learning',
@@ -31,6 +32,7 @@ export default function RootLayout({
           <CartProvider>
             <Header />
             <main className="flex-grow">{children}</main>
+            <Chatbot />
             <Footer />
           </CartProvider>
         </FirebaseClientProvider>

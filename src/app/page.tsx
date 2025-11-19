@@ -16,9 +16,8 @@ export default function Home() {
         <Image
           src="https://picsum.photos/seed/hero/1920/1080"
           alt="Abstract background"
-          layout="fill"
-          objectFit="cover"
-          className="z-0"
+          fill
+          className="z-0 object-cover"
           data-ai-hint="abstract background"
         />
         <div className="absolute inset-0 bg-primary/70 z-10" />
@@ -42,9 +41,11 @@ export default function Home() {
 
       <section id="recommended" className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 font-headline">Recommended For You</h2>
-          {/* This section would be powered by the recommendation engine */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold font-headline">Recommended For You</h2>
+            <p className="mt-2 text-muted-foreground">AI-powered suggestions based on your activity.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
             {getProducts().slice(4, 6).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -57,8 +58,11 @@ export default function Home() {
 
       <section id="products" className="py-16 md:py-24">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 font-headline">Featured Products</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold font-headline">Featured Products</h2>
+            <p className="mt-2 text-muted-foreground">Check out our best-selling items.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
             {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -73,8 +77,11 @@ export default function Home() {
 
       <section id="courses" className="py-16 md:py-24 bg-secondary/50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 font-headline">Featured Courses</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold font-headline">Featured Courses</h2>
+            <p className="mt-2 text-muted-foreground">Expand your knowledge with our top courses.</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
             {featuredCourses.map((course) => (
               <CourseCard key={course.id} course={course} />
             ))}
