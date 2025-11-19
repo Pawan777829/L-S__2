@@ -133,6 +133,58 @@ const products: Product[] = [
       aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-8')?.imageHint || '',
     },
   },
+  {
+    id: 'prod-9',
+    name: 'Smart Notebook',
+    description: 'A reusable, cloud-connected notebook for the digital age. Write, scan, and erase.',
+    price: 39.99,
+    vendor: 'Evernote',
+    category: 'Accessories',
+    image: {
+      src: PlaceHolderImages.find(img => img.id === 'prod-img-9')?.imageUrl || '',
+      alt: 'Smart reusable notebook',
+      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-9')?.imageHint || '',
+    },
+  },
+  {
+    id: 'prod-10',
+    name: 'Desk Lamp with Charger',
+    description: 'An elegant LED desk lamp with a built-in wireless charging pad for your phone.',
+    price: 65.00,
+    vendor: 'LumiCharge',
+    category: 'Office Furniture',
+    image: {
+      src: PlaceHolderImages.find(img => img.id === 'prod-img-10')?.imageUrl || '',
+      alt: 'LED desk lamp with wireless charger',
+      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-10')?.imageHint || '',
+    },
+  },
+  {
+    id: 'prod-11',
+    name: 'Ergonomic Laptop Stand',
+    description: 'An adjustable aluminum laptop stand to improve your posture and workspace.',
+    price: 45.50,
+    vendor: 'StandUp',
+    category: 'Accessories',
+    image: {
+      src: PlaceHolderImages.find(img => img.id === 'prod-img-11')?.imageUrl || '',
+      alt: 'Ergonomic laptop stand',
+      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-11')?.imageHint || '',
+    },
+  },
+  {
+    id: 'prod-12',
+    name: 'USB-C Hub',
+    description: 'A 7-in-1 USB-C hub with HDMI, SD card readers, and multiple USB ports.',
+    price: 55.99,
+    vendor: 'ConnectMore',
+    category: 'Electronics',
+    image: {
+      src: PlaceHolderImages.find(img => img.id === 'prod-img-12')?.imageUrl || '',
+      alt: 'USB-C Hub with multiple ports',
+      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-12')?.imageHint || '',
+    },
+  },
 ];
 
 const courses: Course[] = [
@@ -239,3 +291,5 @@ export const getProductById = (id: string) => products.find(p => p.id === id);
 
 export const getCourses = () => courses;
 export const getCourseById = (id: string) => courses.find(c => c.id === id);
+
+    

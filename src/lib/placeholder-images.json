@@ -39,7 +39,7 @@
     {
       "id": "prod-img-7",
       "description": "Adjustable standing desk",
-      "imageUrl": "https://images.unsplash.com/photo-1622579522120-85a1669d76b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3RhbmRpbmclMjBkZXNrfGVufDB8fHx8MTc2MzM2NTk5Mnww&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1622579522120-85a1669d76b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3RhbmRpbmclMjBkZXNrfGVufDB8fHx8MTc2MzM2NTk5Mnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "standing desk"
     },
     {
@@ -49,45 +49,69 @@
       "imageHint": "webcam"
     },
     {
+      "id": "prod-img-9",
+      "description": "Smart reusable notebook",
+      "imageUrl": "https://images.unsplash.com/photo-1702390796625-6dd9b46b1c0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzbWFydCUyMG5vdGVib29rfGVufDB8fHx8MTc2MzU1MjMyM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "smart notebook"
+    },
+    {
+      "id": "prod-img-10",
+      "description": "LED desk lamp with wireless charger",
+      "imageUrl": "https://images.unsplash.com/photo-1601642964568-1917224f4e4d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxkZXNrJTIwbGFtcHxlbnwwfHx8fDE3NjM0MzQ4NTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "desk lamp"
+    },
+    {
+      "id": "prod-img-11",
+      "description": "Ergonomic laptop stand",
+      "imageUrl": "https://images.unsplash.com/photo-1641057350241-c05da7c70a9f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsYXB0b3AlMjBzdGFuZHxlbnwwfHx8fDE3NjM0NjY2MzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "laptop stand"
+    },
+    {
+      "id": "prod-img-12",
+      "description": "USB-C Hub with multiple ports",
+      "imageUrl": "https://images.unsplash.com/photo-1760462787828-ad5b29cafb30?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxVU0IlMjBodWJ8ZW58MHx8fHwxNzYzNTUyMzIzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "USB hub"
+    },
+    {
       "id": "course-img-1",
       "description": "Introduction to Web Development",
-      "imageUrl": "https://images.unsplash.com/photo-1569693799105-4eb645d89aea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjb2RpbmclMjBsYXB0b3B8ZW58MHx8fHwxNzYzNDI4NzcxfDA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1569693799105-4eb645d89aea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjb2RpbmclMjBsYXB0b3B8ZW58MHx8fHwxNzYzNDI4NzcxfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "coding laptop"
     },
     {
       "id": "course-img-2",
       "description": "Advanced React Patterns",
-      "imageUrl": "https://images.unsplash.com/photo-1653387300291-bfa1eeb90e16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZWFjdCUyMGNvZGV8ZW58MHx8fHwxNzYzNDQyMDc5fDA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1653387300291-bfa1eeb90e16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZWFjdCUyMGNvZGV8ZW58MHx8fHwxNzYzNDQyMDc5fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "react code"
     },
     {
       "id": "course-img-3",
       "description": "Digital Marketing Masterclass",
-      "imageUrl": "https://images.unsplash.com/photo-1639389016237-85a1a16f76d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYXJrZXRpbmclMjBjaGFydHxlbnwwfHx8fDE3NjMzNjY5MDJ8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1639389016237-85a1a16f76d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYXJrZXRpbmclMjBjaGFydHxlbnwwfHx8fDE3NjMzNjY5MDJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "marketing chart"
     },
     {
       "id": "course-img-4",
       "description": "Graphic Design for Beginners",
-      "imageUrl": "https://images.unsplash.com/photo-1700887944225-f148dd124305?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkZXNpZ24lMjB0b29sc3xlbnwwfHx8fDE3NjMzNTA4MzR8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1700887944225-f148dd124305?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxkZXNpZ24lMjB0b29sc3xlbnwwfHx8fDE3NjMzNTA4MzR8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "design tools"
     },
     {
       "id": "course-img-5",
       "description": "AI and Machine Learning Fundamentals",
-      "imageUrl": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhaSUyMGJyYWlufGVufDB8fHx8MTc2MzM4NTcyMnww&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhaSUyMGJyYWlufGVufDB8fHx8MTc2MzM4NTcyMnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "ai brain"
     },
     {
       "id": "course-img-6",
       "description": "Project Management Professional (PMP) Prep",
-      "imageUrl": "https://images.unsplash.com/photo-1743385779347-1549dabf1320?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwcm9qZWN0JTIwcGxhbnxlbnwwfHx8fDE3NjM0NDM1OTV8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1743385779347-1549dabf1320?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwcm9qZWN0JTIwcGxhbnxlbnwwfHx8fDE3NjM0NDM1OTV8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "project plan"
     },
     {
       "id": "course-img-7",
       "description": "The Art of Public Speaking",
-      "imageUrl": "https://images.unsplash.com/photo-1709377274134-94ff067f4d0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cHVibGljJTIwc3BlYWtpbmd8ZW58MHx8fHwxNzYzNDQyNzQ2fDA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1709377274134-94ff067f4d0c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cHVibGljJTIwc3BlYWtpbmd8ZW58MHx8fHwxNzYzNDQyNzQ2fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "public speaking"
     },
     {
