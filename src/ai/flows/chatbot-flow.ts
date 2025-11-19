@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -32,7 +33,7 @@ const chatbotPrompt = ai.definePrompt({
   name: 'chatbotPrompt',
   input: { schema: ChatbotInputSchema },
   output: { schema: ChatbotOutputSchema },
-  system: `You are a friendly and helpful assistant for an e-commerce and learning platform called SynergySphere.
+  system: `You are a friendly and helpful assistant for an e-commerce and learning platform called Learn & Shop.
   Your goal is to help users find products and courses.
   Be conversational and concise in your responses.
   If you don't know the answer, say that you are unable to help with that request.
@@ -56,3 +57,5 @@ const chatbotFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    

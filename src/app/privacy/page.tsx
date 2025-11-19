@@ -9,7 +9,7 @@ export default function PrivacyPolicyPage() {
         
         <h2>Introduction</h2>
         <p>
-          Welcome to SynergySphere. We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website. Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site.
+          Welcome to Learn & Shop. We are committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website. Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site.
         </p>
         
         <h2>Collection of Your Information</h2>
@@ -46,7 +46,7 @@ export default function PrivacyPolicyPage() {
           If you have questions or comments about this Privacy Policy, please contact us at:
         </p>
         <p>
-          SynergySphere Internet Private Limited<br />
+          Learn & Shop Internet Private Limited<br />
           123 Synergy Way, Innovation City, 560103<br />
           contact@synergysphere.com
         </p>
@@ -54,3 +54,5 @@ export default function PrivacyPolicyPage() {
     </div>
   );
 }
+
+    

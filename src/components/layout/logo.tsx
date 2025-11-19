@@ -1,24 +1,19 @@
+
 import Link from 'next/link';
+import { GraduationCap, ShoppingBag } from 'lucide-react';
 
 export function Logo() {
   return (
     <Link href="/" className="flex items-center space-x-2">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="h-6 w-6 text-primary"
-      >
-        <circle cx="12" cy="12" r="10" />
-        <circle cx="12" cy="12" r="3" />
-      </svg>
+       <div className="relative h-7 w-7 text-primary">
+        <ShoppingBag className="h-6 w-6" />
+        <GraduationCap className="absolute -right-1 -bottom-1 h-4 w-4 text-primary fill-background" />
+      </div>
       <span className="hidden font-bold sm:inline-block font-headline">
-        SynergySphere
+        Learn & Shop
       </span>
     </Link>
   );
 }
+
+    

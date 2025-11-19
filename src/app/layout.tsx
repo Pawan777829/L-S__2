@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { Header } from '@/components/layout/header';
@@ -8,7 +9,7 @@ import { FirebaseClientProvider } from '@/firebase';
 import Chatbot from '@/components/shared/chatbot';
 
 export const metadata: Metadata = {
-  title: 'SynergySphere - Unified Commerce and Learning',
+  title: 'Learn & Shop - Unified Commerce and Learning',
   description: 'A platform that combines e-commerce and a learning portal with vendor integration.',
 };
 
@@ -41,3 +42,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+    

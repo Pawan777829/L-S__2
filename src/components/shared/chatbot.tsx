@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -18,7 +19,7 @@ export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
-      text: "Hello! I'm your SynergySphere assistant. How can I help you find the perfect product or course today?",
+      text: "Hello! I'm your Learn & Shop assistant. How can I help you find the perfect product or course today?",
       sender: 'bot',
     },
   ]);
@@ -86,7 +87,7 @@ export default function Chatbot() {
       >
         <div className="flex flex-col h-[60vh]">
           <header className="p-4 bg-primary text-primary-foreground rounded-t-lg">
-            <h3 className="text-lg font-semibold font-headline">SynergySphere Assistant</h3>
+            <h3 className="text-lg font-semibold font-headline">Learn & Shop Assistant</h3>
           </header>
           <ScrollArea className="flex-1" ref={scrollAreaRef}>
             <div className="p-4 space-y-4">
@@ -157,3 +158,5 @@ export default function Chatbot() {
     </Popover>
   );
 }
+
+    

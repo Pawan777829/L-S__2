@@ -14,7 +14,7 @@ export default function TermsOfUsePage() {
         
         <h2>2. Intellectual Property Rights</h2>
         <p>
-          The Site and its original content, features, and functionality are owned by SynergySphere and are protected by international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws.
+          The Site and its original content, features, and functionality are owned by Learn & Shop and are protected by international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws.
         </p>
         
         <h2>3. User Accounts</h2>
@@ -35,3 +35,5 @@ export default function TermsOfUsePage() {
     </div>
   );
 }
+
+    

@@ -46,9 +46,9 @@ export function Footer() {
           <div className="col-span-full md:col-span-2 border-t md:border-l md:border-t-0 pt-6 md:pt-0 md:pl-6 border-dashed">
              <h3 className="font-semibold mb-4 text-foreground font-headline">Mail Us:</h3>
              <p className="text-muted-foreground">
-                SynergySphere Internet Private Limited,
+                Learn & Shop Internet Private Limited,
                 <br />
-                Buildings Alyssa, Begonia &
+                Buildings Alyssa, Begonia &amp;
                 <br />
                 Clove Embassy Tech Village,
                 <br />
@@ -61,7 +61,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-12 pt-8 border-t border-dashed flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
-          <p className="order-2 md:order-1 mt-4 md:mt-0">&copy; {new Date().getFullYear()} SynergySphere. All rights reserved.</p>
+          <p className="order-2 md:order-1 mt-4 md:mt-0">&copy; {new Date().getFullYear()} Learn & Shop. All rights reserved.</p>
           <div className="order-1 md:order-2">
             <Logo />
           </div>
@@ -70,3 +70,5 @@ export function Footer() {
     </footer>
   );
 }
+
+    

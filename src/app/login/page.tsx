@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -76,7 +77,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold font-headline">Welcome Back!</CardTitle>
-          <CardDescription>Sign in to continue to SynergySphere</CardDescription>
+          <CardDescription>Sign in to continue to Learn & Shop</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -125,3 +126,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+    

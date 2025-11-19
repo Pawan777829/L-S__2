@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -23,7 +24,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-primary/70 z-10" />
         <div className="relative z-20 container mx-auto px-4 animate-fade-in-up">
           <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 drop-shadow-lg">
-            Welcome to SynergySphere
+            Welcome to Learn & Shop
           </h1>
           <p className="text-lg md:text-2xl mb-8 max-w-3xl mx-auto drop-shadow-md">
             Your unified marketplace for products and learning.
@@ -96,3 +97,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

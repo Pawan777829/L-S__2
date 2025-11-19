@@ -40,7 +40,7 @@ export default function AboutUsPage() {
         <section className="relative w-full h-[50vh] flex items-center justify-center text-center text-white">
             <Image
             src="https://picsum.photos/seed/about-hero/1920/1080"
-            alt="SynergySphere Office"
+            alt="Learn & Shop Office"
             fill
             className="z-0 object-cover"
             data-ai-hint="modern office"
@@ -48,7 +48,7 @@ export default function AboutUsPage() {
             <div className="absolute inset-0 bg-primary/70 z-10" />
             <div className="relative z-20 container mx-auto px-4">
                 <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4">
-                    About SynergySphere
+                    About Learn & Shop
                 </h1>
                 <p className="text-lg md:text-2xl max-w-3xl mx-auto">
                     A unified marketplace for products and learning.
@@ -62,7 +62,7 @@ export default function AboutUsPage() {
                 <div className="max-w-4xl mx-auto text-center">
                     <h2 className="text-3xl font-bold font-headline mb-4">Our Mission</h2>
                     <p className="text-xl text-muted-foreground">
-                        Our mission is to create a revolutionary platform that seamlessly blends commerce and education. We empower vendors to reach new markets while offering users a unique space to shop, learn, and grow. At SynergySphere, we believe in the power of connection and knowledge to drive personal and professional success.
+                        Our mission is to create a revolutionary platform that seamlessly blends commerce and education. We empower vendors to reach new markets while offering users a unique space to shop, learn, and grow. At Learn & Shop, we believe in the power of connection and knowledge to drive personal and professional success.
                     </p>
                 </div>
             </div>
@@ -119,3 +119,5 @@ export default function AboutUsPage() {
     </div>
   );
 }
+
+    
