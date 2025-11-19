@@ -105,6 +105,11 @@
           "type": "string",
           "description": "URL of the product image.",
           "format": "uri"
+        },
+        "category": {
+            "type": "string",
+            "description": "The category of the product.",
+            "enum": ["Office Furniture", "Electronics", "Accessories"]
         }
       },
       "required": [
@@ -113,7 +118,8 @@
         "name",
         "description",
         "price",
-        "imageUrl"
+        "imageUrl",
+        "category"
       ]
     },
     "Course": {

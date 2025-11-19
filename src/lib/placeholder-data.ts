@@ -6,6 +6,7 @@ export type Product = {
   description: string;
   price: number;
   vendor: string;
+  category: 'Office Furniture' | 'Electronics' | 'Accessories';
   image: {
     src: string;
     alt: string;
@@ -33,6 +34,7 @@ const products: Product[] = [
     description: 'The ultimate chair for comfort and productivity during long work hours.',
     price: 349.99,
     vendor: 'OfficePro',
+    category: 'Office Furniture',
     image: {
       src: PlaceHolderImages.find(img => img.id === 'prod-img-1')?.imageUrl || '',
       alt: 'Modern ergonomic chair',
@@ -45,6 +47,7 @@ const products: Product[] = [
     description: 'A sleek, mechanical keyboard with customizable RGB backlighting.',
     price: 129.99,
     vendor: 'TechGear',
+    category: 'Electronics',
     image: {
       src: PlaceHolderImages.find(img => img.id === 'prod-img-2')?.imageUrl || '',
       alt: 'Wireless mechanical keyboard',
@@ -57,6 +60,7 @@ const products: Product[] = [
     description: 'A 27-inch 4K UHD monitor with vibrant colors and crisp details.',
     price: 499.99,
     vendor: 'ViewSonic',
+    category: 'Electronics',
     image: {
       src: PlaceHolderImages.find(img => img.id === 'prod-img-3')?.imageUrl || '',
       alt: '4K Ultra HD monitor',
@@ -69,6 +73,7 @@ const products: Product[] = [
     description: 'Immerse yourself in sound with these premium over-ear headphones.',
     price: 299.99,
     vendor: 'AudioPhile',
+    category: 'Accessories',
     image: {
       src: PlaceHolderImages.find(img => img.id === 'prod-img-4')?.imageUrl || '',
       alt: 'Noise-cancelling headphones',
@@ -81,6 +86,7 @@ const products: Product[] = [
     description: 'Control all your smart devices from one central hub with voice commands.',
     price: 99.99,
     vendor: 'ConnectHome',
+    category: 'Electronics',
     image: {
       src: PlaceHolderImages.find(img => img.id === 'prod-img-5')?.imageUrl || '',
       alt: 'Smart home hub',
@@ -93,6 +99,7 @@ const products: Product[] = [
     description: 'A 20,000mAh power bank to keep your devices charged on the go.',
     price: 49.99,
     vendor: 'ChargeUp',
+    category: 'Accessories',
     image: {
       src: PlaceHolderImages.find(img => img.id === 'prod-img-6')?.imageUrl || '',
       alt: 'Portable power bank',
@@ -105,6 +112,7 @@ const products: Product[] = [
     description: 'Switch between sitting and standing with this electric height-adjustable desk.',
     price: 599.99,
     vendor: 'OfficePro',
+    category: 'Office Furniture',
     image: {
       src: PlaceHolderImages.find(img => img.id === 'prod-img-7')?.imageUrl || '',
       alt: 'Adjustable standing desk',
@@ -117,6 +125,7 @@ const products: Product[] = [
     description: 'A 1080p webcam with a built-in ring light for professional video calls.',
     price: 79.99,
     vendor: 'StreamLine',
+    category: 'Accessories',
     image: {
       src: PlaceHolderImages.find(img => img.id === 'prod-img-8')?.imageUrl || '',
       alt: 'Webcam with ring light',
