@@ -185,6 +185,58 @@ const products: Product[] = [
       aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-12')?.imageHint || '',
     },
   },
+  {
+    id: 'prod-13',
+    name: 'Pastel Highlighters (Set of 6)',
+    description: 'A set of 6 beautiful pastel-colored highlighters, perfect for studying and note-taking.',
+    price: 499.00,
+    vendor: 'Inkwell',
+    category: 'Accessories',
+    image: {
+      src: PlaceHolderImages.find(img => img.id === 'prod-img-13')?.imageUrl || '',
+      alt: 'Pastel highlighters on a desk',
+      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-13')?.imageHint || '',
+    },
+  },
+  {
+    id: 'prod-14',
+    name: 'Sticky Note Tabs',
+    description: 'Colorful and repositionable tabs to mark pages and write quick notes.',
+    price: 249.00,
+    vendor: 'Post-it',
+    category: 'Accessories',
+    image: {
+      src: PlaceHolderImages.find(img => img.id === 'prod-img-14')?.imageUrl || '',
+      alt: 'Colorful sticky note tabs',
+      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-14')?.imageHint || '',
+    },
+  },
+  {
+    id: 'prod-15',
+    name: 'Luxury Fountain Pen',
+    description: 'Experience smooth writing with this elegant, refillable fountain pen.',
+    price: 1999.00,
+    vendor: 'Parker',
+    category: 'Accessories',
+    image: {
+      src: PlaceHolderImages.find(img => img.id === 'prod-img-15')?.imageUrl || '',
+      alt: 'A luxury fountain pen',
+      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-15')?.imageHint || '',
+    },
+  },
+  {
+    id: 'prod-16',
+    name: 'Classic Leather Journal',
+    description: 'A beautiful leather-bound journal with 200 pages of high-quality paper.',
+    price: 999.00,
+    vendor: 'Moleskine',
+    category: 'Accessories',
+    image: {
+      src: PlaceHolderImages.find(img => img.id === 'prod-img-16')?.imageUrl || '',
+      alt: 'A classic leather-bound journal',
+      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-16')?.imageHint || '',
+    },
+  },
 ];
 
 const courses: Course[] = [
