@@ -1,17 +1,39 @@
 
 import { PlaceHolderImages } from './placeholder-images';
 
+export type ProductImage = {
+  src: string;
+  alt: string;
+  aiHint: string;
+};
+
+export type ProductVariant = {
+  id: string;
+  color: string;
+  mrp: number;
+  price: number;
+  stock: number;
+  images: ProductImage[];
+};
+
+export type ProductSpecification = {
+    name: string;
+    value: string;
+}
+
 export type Product = {
   id: string;
   name: string;
   description: string;
-  price: number;
-  vendor: string;
   category: 'Office Furniture' | 'Electronics' | 'Accessories';
-  image: {
-    src: string;
-    alt: string;
-    aiHint: string;
+  vendor: string;
+  highlights: string[];
+  specifications: ProductSpecification[];
+  variants: ProductVariant[];
+  offers: string[];
+  services: {
+    warranty: string;
+    returnPolicy: string;
   };
 };
 
@@ -32,29 +54,123 @@ const products: Product[] = [
   {
     id: 'prod-1',
     name: 'Ergonomic Chair',
-    description: 'The ultimate chair for comfort and productivity during long work hours.',
-    price: 349.99,
+    description: 'The ultimate chair for comfort and productivity during long work hours. Featuring adjustable lumbar support, 4D armrests, and a breathable mesh back, this chair is designed to keep you comfortable and focused throughout the day.',
     vendor: 'OfficePro',
     category: 'Office Furniture',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-1')?.imageUrl || '',
-      alt: 'Modern ergonomic chair',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-1')?.imageHint || '',
+    highlights: [
+      "Adjustable lumbar support",
+      "4D adjustable armrests",
+      "Breathable mesh back",
+      "Synchro-tilt mechanism",
+      "5-year warranty"
+    ],
+    specifications: [
+      { name: "Material", value: "Nylon Mesh, Aluminum Frame" },
+      { name: "Weight Capacity", value: "150 kg" },
+      { name: "Dimensions", value: "65cm x 65cm x 120cm" },
+      { name: "Recline Angle", value: "90-135 degrees" }
+    ],
+    offers: [
+        "10% off on HDFC Bank Credit Card",
+        "No Cost EMI available",
+        "Special discount: Get 5% extra off"
+    ],
+    services: {
+        warranty: "5 Year Manufacturer Warranty",
+        returnPolicy: "10 Days Replacement Policy"
     },
+    variants: [
+      {
+        id: 'prod-1-black',
+        color: 'Black',
+        mrp: 399.99,
+        price: 349.99,
+        stock: 50,
+        images: [
+          {
+            src: PlaceHolderImages.find(img => img.id === 'prod-img-1')?.imageUrl || '',
+            alt: 'Modern ergonomic chair in black',
+            aiHint: 'ergonomic chair black'
+          },
+           {
+            src: 'https://picsum.photos/seed/chair-black-2/1000/1000',
+            alt: 'Modern ergonomic chair in black - side view',
+            aiHint: 'ergonomic chair side'
+          },
+           {
+            src: 'https://picsum.photos/seed/chair-black-3/1000/1000',
+            alt: 'Modern ergonomic chair in black - back view',
+            aiHint: 'ergonomic chair back'
+          }
+        ]
+      },
+      {
+        id: 'prod-1-white',
+        color: 'White',
+        mrp: 419.99,
+        price: 369.99,
+        stock: 35,
+        images: [
+          {
+            src: 'https://picsum.photos/seed/chair-white-1/1000/1000',
+            alt: 'Modern ergonomic chair in white',
+            aiHint: 'ergonomic chair white'
+          },
+          {
+            src: 'https://picsum.photos/seed/chair-white-2/1000/1000',
+            alt: 'Modern ergonomic chair in white - side view',
+            aiHint: 'ergonomic chair side'
+          }
+        ]
+      }
+    ]
   },
   {
     id: 'prod-2',
-    name: 'Wireless Keyboard',
-    description: 'A sleek, mechanical keyboard with customizable RGB backlighting.',
+    name: 'Wireless Mechanical Keyboard',
+    description: 'A sleek, 75% layout mechanical keyboard with hot-swappable switches, customizable RGB backlighting, and dual Bluetooth/wired connectivity. Perfect for gamers and programmers.',
     price: 129.99,
     vendor: 'TechGear',
     category: 'Electronics',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-2')?.imageUrl || '',
-      alt: 'Wireless mechanical keyboard',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-2')?.imageHint || '',
+     highlights: [
+      "Hot-swappable switches (Gateron Brown)",
+      "Customizable RGB backlighting",
+      "Bluetooth 5.1 and USB-C connectivity",
+      "Compact 75% layout",
+      "PBT keycaps"
+    ],
+    specifications: [
+      { name: "Layout", value: "75%" },
+      { name: "Switch Type", value: "Gateron Brown Mechanical" },
+      { name: "Connectivity", value: "Bluetooth 5.1, USB-C" },
+      { name: "Battery Life", value: "Up to 72 hours with RGB" }
+    ],
+    offers: [
+        "5% Cashback with Learn&Shop Pay Later",
+        "Partner Offer: Get 3 months of free coding classes"
+    ],
+    services: {
+        warranty: "1 Year Warranty",
+        returnPolicy: "10 Days Replacement Policy"
     },
+    variants: [
+        {
+            id: 'prod-2-grey',
+            color: 'Grey',
+            mrp: 149.99,
+            price: 129.99,
+            stock: 120,
+            images: [
+                {
+                    src: PlaceHolderImages.find(img => img.id === 'prod-img-2')?.imageUrl || '',
+                    alt: 'Wireless mechanical keyboard',
+                    aiHint: 'mechanical keyboard'
+                }
+            ]
+        }
+    ]
   },
+  // Add more products with the new structure...
   {
     id: 'prod-3',
     name: '4K Monitor',
@@ -62,11 +178,29 @@ const products: Product[] = [
     price: 499.99,
     vendor: 'ViewSonic',
     category: 'Electronics',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-3')?.imageUrl || '',
-      alt: '4K Ultra HD monitor',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-3')?.imageHint || '',
-    },
+    highlights: ["27-inch 4K UHD (3840x2160) display", "99% sRGB color gamut", "USB-C with 65W power delivery", "Adjustable stand"],
+    specifications: [
+        { name: "Screen Size", value: "27 inches" },
+        { name: "Resolution", value: "4K UHD (3840x2160)" },
+    ],
+    offers: [],
+    services: { warranty: '3 Years', returnPolicy: '10 Days Replacement' },
+    variants: [
+        {
+            id: 'prod-3-silver',
+            color: 'Silver',
+            mrp: 549.99,
+            price: 499.99,
+            stock: 80,
+            images: [
+                {
+                    src: PlaceHolderImages.find(img => img.id === 'prod-img-3')?.imageUrl || '',
+                    alt: '4K Ultra HD monitor',
+                    aiHint: 'computer monitor'
+                }
+            ]
+        }
+    ]
   },
   {
     id: 'prod-4',
@@ -75,167 +209,29 @@ const products: Product[] = [
     price: 299.99,
     vendor: 'AudioPhile',
     category: 'Accessories',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-4')?.imageUrl || '',
-      alt: 'Noise-cancelling headphones',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-4')?.imageHint || '',
-    },
-  },
-    {
-    id: 'prod-5',
-    name: 'Smart Home Hub',
-    description: 'Control all your smart devices from one central hub with voice commands.',
-    price: 99.99,
-    vendor: 'ConnectHome',
-    category: 'Electronics',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-5')?.imageUrl || '',
-      alt: 'Smart home hub',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-5')?.imageHint || '',
-    },
-  },
-  {
-    id: 'prod-6',
-    name: 'Portable Power Bank',
-    description: 'A 20,000mAh power bank to keep your devices charged on the go.',
-    price: 49.99,
-    vendor: 'ChargeUp',
-    category: 'Accessories',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-6')?.imageUrl || '',
-      alt: 'Portable power bank',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-6')?.imageHint || '',
-    },
-  },
-  {
-    id: 'prod-7',
-    name: 'Adjustable Standing Desk',
-    description: 'Switch between sitting and standing with this electric height-adjustable desk.',
-    price: 599.99,
-    vendor: 'OfficePro',
-    category: 'Office Furniture',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-7')?.imageUrl || '',
-      alt: 'Adjustable standing desk',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-7')?.imageHint || '',
-    },
-  },
-  {
-    id: 'prod-8',
-    name: 'Webcam with Ring Light',
-    description: 'A 1080p webcam with a built-in ring light for professional video calls.',
-    price: 79.99,
-    vendor: 'StreamLine',
-    category: 'Accessories',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-8')?.imageUrl || '',
-      alt: 'Webcam with ring light',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-8')?.imageHint || '',
-    },
-  },
-  {
-    id: 'prod-9',
-    name: 'Smart Notebook',
-    description: 'A reusable, cloud-connected notebook for the digital age. Write, scan, and erase.',
-    price: 39.99,
-    vendor: 'Evernote',
-    category: 'Accessories',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-9')?.imageUrl || '',
-      alt: 'Smart reusable notebook',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-9')?.imageHint || '',
-    },
-  },
-  {
-    id: 'prod-10',
-    name: 'Desk Lamp with Charger',
-    description: 'An elegant LED desk lamp with a built-in wireless charging pad for your phone.',
-    price: 65.00,
-    vendor: 'LumiCharge',
-    category: 'Office Furniture',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-10')?.imageUrl || '',
-      alt: 'LED desk lamp with wireless charger',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-10')?.imageHint || '',
-    },
-  },
-  {
-    id: 'prod-11',
-    name: 'Ergonomic Laptop Stand',
-    description: 'An adjustable aluminum laptop stand to improve your posture and workspace.',
-    price: 45.50,
-    vendor: 'StandUp',
-    category: 'Accessories',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-11')?.imageUrl || '',
-      alt: 'Ergonomic laptop stand',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-11')?.imageHint || '',
-    },
-  },
-  {
-    id: 'prod-12',
-    name: 'USB-C Hub',
-    description: 'A 7-in-1 USB-C hub with HDMI, SD card readers, and multiple USB ports.',
-    price: 55.99,
-    vendor: 'ConnectMore',
-    category: 'Electronics',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-12')?.imageUrl || '',
-      alt: 'USB-C Hub with multiple ports',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-12')?.imageHint || '',
-    },
-  },
-  {
-    id: 'prod-13',
-    name: 'Pastel Highlighters (Set of 6)',
-    description: 'A set of 6 beautiful pastel-colored highlighters, perfect for studying and note-taking.',
-    price: 499.00,
-    vendor: 'Inkwell',
-    category: 'Accessories',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-13')?.imageUrl || '',
-      alt: 'Pastel highlighters on a desk',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-13')?.imageHint || '',
-    },
-  },
-  {
-    id: 'prod-14',
-    name: 'Sticky Note Tabs',
-    description: 'Colorful and repositionable tabs to mark pages and write quick notes.',
-    price: 249.00,
-    vendor: 'Post-it',
-    category: 'Accessories',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-14')?.imageUrl || '',
-      alt: 'Colorful sticky note tabs',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-14')?.imageHint || '',
-    },
-  },
-  {
-    id: 'prod-15',
-    name: 'Luxury Fountain Pen',
-    description: 'Experience smooth writing with this elegant, refillable fountain pen.',
-    price: 1999.00,
-    vendor: 'Parker',
-    category: 'Accessories',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-15')?.imageUrl || '',
-      alt: 'A luxury fountain pen',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-15')?.imageHint || '',
-    },
-  },
-  {
-    id: 'prod-16',
-    name: 'Classic Leather Journal',
-    description: 'A beautiful leather-bound journal with 200 pages of high-quality paper.',
-    price: 999.00,
-    vendor: 'Moleskine',
-    category: 'Accessories',
-    image: {
-      src: PlaceHolderImages.find(img => img.id === 'prod-img-16')?.imageUrl || '',
-      alt: 'A classic leather-bound journal',
-      aiHint: PlaceHolderImages.find(img => img.id === 'prod-img-16')?.imageHint || '',
-    },
+    highlights: ["Active Noise Cancellation", "Up to 30 hours battery life", "Comfortable over-ear design", "Crystal-clear calls"],
+     specifications: [
+        { name: "Type", value: "Over-ear" },
+        { name: "Connectivity", value: "Bluetooth 5.0, 3.5mm jack" },
+    ],
+    offers: [],
+    services: { warranty: '2 Years', returnPolicy: '10 Days Replacement' },
+    variants: [
+        {
+            id: 'prod-4-black',
+            color: 'Black',
+            mrp: 329.99,
+            price: 299.99,
+            stock: 150,
+            images: [
+                {
+                    src: PlaceHolderImages.find(img => img.id === 'prod-img-4')?.imageUrl || '',
+                    alt: 'Noise-cancelling headphones',
+                    aiHint: 'headphones'
+                }
+            ]
+        }
+    ]
   },
 ];
 
@@ -343,5 +339,3 @@ export const getProductById = (id: string) => products.find(p => p.id === id);
 
 export const getCourses = () => courses;
 export const getCourseById = (id: string) => courses.find(c => c.id === id);
-
-    

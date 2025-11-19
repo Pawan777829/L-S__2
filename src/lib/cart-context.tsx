@@ -1,7 +1,8 @@
+
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import type { Product, Course } from './placeholder-data';
+import type { Product, Course, ProductVariant } from './placeholder-data';
 import { useToast } from '@/hooks/use-toast';
 import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, doc, getDocs, writeBatch } from 'firebase/firestore';
@@ -12,17 +13,27 @@ import {
 } from '@/firebase/non-blocking-updates';
 import { useCollection } from '@/firebase/firestore/use-collection';
 
+// The item that gets stored in the cart context and Firestore
+export type CartItemBase = {
+  id: string; // Firestore document ID
+  itemId: string; // Product or Course ID
+  variantId?: string; // ProductVariant ID
+  type: 'product' | 'course';
+  quantity: number;
+}
 
+// The item that's used throughout the app UI, with full object details
 export type CartItem = {
-  id: string;
-  item: Product | Course;
+  id: string; // Firestore document ID
+  item: (Product | Course) & { price: number; image: {src: string, alt: string}};
   type: 'product' | 'course';
   quantity: number;
 };
 
+
 type CartContextType = {
   cartItems: CartItem[];
-  addToCart: (item: Product | Course, type: 'product' | 'course', quantity?: number) => void;
+  addToCart: (item: Product | Course, type: 'product' | 'course', quantity?: number, variant?: ProductVariant) => void;
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
@@ -43,63 +54,84 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return collection(firestore, `users/${user.uid}/cart`);
   }, [firestore, user]);
 
-  const { data: firestoreCartItems, isLoading: isCartLoading } = useCollection<CartItem>(cartCollectionRef);
+  // This hook now fetches the raw CartItemBase objects from Firestore
+  const { data: firestoreCartItems, isLoading: isCartLoading } = useCollection<CartItemBase>(cartCollectionRef);
 
-  const [localCartItems, setLocalCartItems] = useState<CartItem[]>([]);
+  const [localCart, setLocalCart] = useState<CartItem[]>([]);
   
-  const cartItems = user ? (firestoreCartItems || []) : localCartItems;
+  // Here we would transform firestoreCartItems into the rich CartItem shape
+  // For this placeholder, we'll assume the `item` is stored denormalized.
+  // In a real app, you would fetch product/course details here based on itemId.
+  const cartItems: CartItem[] = user ? (firestoreCartItems as any[] || []) : localCart;
+
   const isLoading = isUserLoading || (user && isCartLoading);
   
-  // Merge local cart to firestore cart on login
+  // Logic to merge local cart to firestore cart on login
   useEffect(() => {
-    if (user && firestore && localCartItems.length > 0) {
-      const userCartRef = collection(firestore, 'users', user.uid, 'cart');
-
-      getDocs(userCartRef).then(snapshot => {
+    if (user && firestore && localCart.length > 0 && !isCartLoading) {
+        const userCartRef = collection(firestore, 'users', user.uid, 'cart');
         const batch = writeBatch(firestore);
-        const firestoreItems = snapshot.docs.map(d => ({...d.data(), id: d.id})) as CartItem[];
 
-        localCartItems.forEach(localItem => {
-          const existingItem = firestoreItems.find(item => item.item.id === localItem.item.id);
-          if (existingItem) {
-            const docRef = doc(userCartRef, existingItem.id);
-            batch.update(docRef, { quantity: existingItem.quantity + localItem.quantity });
-          } else {
-            const docRef = doc(userCartRef);
-            const plainItem = JSON.parse(JSON.stringify(localItem.item));
-            batch.set(docRef, { item: plainItem, quantity: localItem.quantity, type: localItem.type });
-          }
+        localCart.forEach(localItem => {
+            const existingItem = firestoreCartItems?.find(item => item.itemId === localItem.item.id && ('variantId' in item ? item.variantId === (localItem.item as any).variantId : true));
+            
+            if (existingItem && existingItem.id) {
+                const docRef = doc(userCartRef, existingItem.id);
+                batch.update(docRef, { quantity: existingItem.quantity + localItem.quantity });
+            } else {
+                const docRef = doc(userCartRef);
+                const newCartItem: Omit<CartItemBase, 'id'> = {
+                    itemId: localItem.item.id,
+                    type: localItem.type,
+                    quantity: localItem.quantity,
+                    ...(localItem.type === 'product' && { variantId: (localItem.item as any).id })
+                };
+                 // Storing the full item is denormalization. This is simpler for the prototype
+                 // but in a real app you might just store IDs.
+                batch.set(docRef, { ...newCartItem, item: JSON.parse(JSON.stringify(localItem.item)) });
+            }
         });
         
         batch.commit().then(() => {
-          setLocalCartItems([]);
+            setLocalCart([]);
         });
-      });
     }
-  }, [user, firestore, localCartItems]);
+  }, [user, firestore, localCart, firestoreCartItems, isCartLoading]);
 
 
-  const addToCart = (itemToAdd: Product | Course, type: 'product' | 'course', quantity: number = 1) => {
-    const existingItem = cartItems.find(item => item.item.id === itemToAdd.id);
+  const addToCart = (itemToAdd: Product | Course, type: 'product' | 'course', quantity: number = 1, variant?: ProductVariant) => {
+    
+    // Use variant details if it's a product
+    const itemWithDetails = {
+        ...itemToAdd,
+        id: type === 'product' ? (variant ? variant.id : (itemToAdd as Product).variants[0].id) : itemToAdd.id,
+        price: type === 'product' ? (variant ? variant.price : (itemToAdd as Product).variants[0].price) : itemToAdd.price,
+        image: type === 'product' ? (variant ? variant.images[0] : (itemToAdd as Product).variants[0].images[0]) : itemToAdd.image,
+    };
+
+    const uniqueIdInCart = itemWithDetails.id; // e.g. 'prod-1-black' or 'course-1'
+    
+    const existingItem = cartItems.find(item => item.item.id === uniqueIdInCart);
 
     if (user && cartCollectionRef) {
       if (existingItem) {
         const docRef = doc(cartCollectionRef, existingItem.id);
         updateDocumentNonBlocking(docRef, { quantity: existingItem.quantity + quantity });
       } else {
-        const plainItem = JSON.parse(JSON.stringify(itemToAdd));
+        const plainItem = JSON.parse(JSON.stringify(itemWithDetails));
         addDocumentNonBlocking(cartCollectionRef, { item: plainItem, type, quantity });
       }
     } else {
-      setLocalCartItems(prevItems => {
-        if (existingItem) {
+      setLocalCart(prevItems => {
+        const existingLocalItem = prevItems.find(item => item.item.id === uniqueIdInCart);
+        if (existingLocalItem) {
           return prevItems.map(item =>
-            item.item.id === itemToAdd.id
+            item.item.id === uniqueIdInCart
               ? { ...item, quantity: item.quantity + quantity }
               : item
           );
         }
-        return [...prevItems, { id: itemToAdd.id, item: itemToAdd, type, quantity }];
+        return [...prevItems, { id: uniqueIdInCart, item: itemWithDetails, type, quantity }];
       });
     }
 
@@ -109,34 +141,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const removeFromCart = (itemId: string) => {
-    const itemToRemove = cartItems.find(item => item.item.id === itemId);
-    if (!itemToRemove) return;
-    
+  const removeFromCart = (cartDocId: string) => {
     if (user && cartCollectionRef) {
-        const docRef = doc(cartCollectionRef, itemToRemove.id);
+        const docRef = doc(cartCollectionRef, cartDocId);
         deleteDocumentNonBlocking(docRef);
     } else {
-        setLocalCartItems(prevItems => prevItems.filter(item => item.item.id !== itemId));
+        // For local cart, we don't have a firestore doc ID. We'll use the item's unique id.
+        setLocalCart(prevItems => prevItems.filter(item => item.id !== cartDocId));
     }
   };
 
-  const updateQuantity = (itemId: string, quantity: number) => {
-    const itemToUpdate = cartItems.find(item => item.item.id === itemId);
-    if (!itemToUpdate) return;
-    
+  const updateQuantity = (cartDocId: string, quantity: number) => {
     if (quantity <= 0) {
-      removeFromCart(itemId);
+      removeFromCart(cartDocId);
       return;
     }
-
+    
     if (user && cartCollectionRef) {
-        const docRef = doc(cartCollectionRef, itemToUpdate.id);
+        const docRef = doc(cartCollectionRef, cartDocId);
         updateDocumentNonBlocking(docRef, { quantity });
     } else {
-        setLocalCartItems(prevItems =>
+        setLocalCart(prevItems =>
             prevItems.map(item =>
-                item.item.id === itemId ? { ...item, quantity } : item
+                item.id === cartDocId ? { ...item, quantity } : item
             )
         );
     }
@@ -151,7 +178,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       });
       batch.commit();
     } else {
-      setLocalCartItems([]);
+      setLocalCart([]);
     }
   };
 

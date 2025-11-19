@@ -22,6 +22,13 @@ type ProductCardProps = {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
+  const defaultVariant = product.variants[0];
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart({ ...product, price: defaultVariant.price }, 'product');
+  };
 
   return (
     <Card className="flex flex-col group overflow-hidden">
@@ -29,11 +36,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         <Link href={`/products/${product.id}`} className="block overflow-hidden">
           <div className="relative aspect-[4/3] w-full">
             <Image
-              src={product.image.src}
-              alt={product.image.alt}
+              src={defaultVariant.images[0].src}
+              alt={defaultVariant.images[0].alt}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
-              data-ai-hint={product.image.aiHint}
+              data-ai-hint={defaultVariant.images[0].aiHint}
             />
           </div>
         </Link>
@@ -47,8 +54,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         </CardDescription>
       </CardContent>
       <CardFooter className="p-4 flex justify-between items-center">
-        <p className="font-semibold text-lg">₹{product.price.toFixed(2)}</p>
-        <Button size="sm" onClick={() => addToCart(product, 'product')}>
+        <p className="font-semibold text-lg">₹{defaultVariant.price.toFixed(2)}</p>
+        <Button size="sm" onClick={handleAddToCart}>
           <ShoppingCart className="mr-2 h-4 w-4" />
           Add to cart
         </Button>

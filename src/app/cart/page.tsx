@@ -13,14 +13,18 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 function CartItem({ item }: { item: CartItemType }) {
   const { updateQuantity, removeFromCart } = useCart();
-  const linkHref = item.type === 'product' ? `/products/${item.item.id}` : `/courses/${item.item.id}`;
+  
+  // The item in the cart now contains the full details we need.
+  const productOrCourse = item.item;
+  const linkHref = item.type === 'product' ? `/products/${productOrCourse.id.split('-')[1]}` : `/courses/${productOrCourse.id}`;
+
 
   return (
     <div className="flex items-center gap-4 py-4">
       <Link href={linkHref} className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border">
         <Image
-          src={item.item.image.src}
-          alt={item.item.image.alt}
+          src={productOrCourse.image.src}
+          alt={productOrCourse.image.alt}
           width={96}
           height={96}
           className="object-cover"
@@ -28,24 +32,24 @@ function CartItem({ item }: { item: CartItemType }) {
       </Link>
       <div className="flex-grow">
          <Link href={linkHref}>
-          <h3 className="font-semibold hover:underline">{item.item.name}</h3>
+          <h3 className="font-semibold hover:underline">{productOrCourse.name}</h3>
         </Link>
-        <p className="text-sm text-muted-foreground">₹{item.item.price.toFixed(2)}</p>
+        <p className="text-sm text-muted-foreground">₹{productOrCourse.price.toFixed(2)}</p>
         <div className="mt-2 flex items-center gap-2">
           <Input
             type="number"
             min="1"
             value={item.quantity}
-            onChange={(e) => updateQuantity(item.item.id, parseInt(e.target.value, 10))}
+            onChange={(e) => updateQuantity(item.id, parseInt(e.target.value, 10))}
             className="h-9 w-20"
           />
-          <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.item.id)}>
+          <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)}>
             <Trash2 className="h-4 w-4 text-muted-foreground" />
             <span className="sr-only">Remove item</span>
           </Button>
         </div>
       </div>
-      <p className="font-semibold">₹{(item.item.price * item.quantity).toFixed(2)}</p>
+      <p className="font-semibold">₹{(productOrCourse.price * item.quantity).toFixed(2)}</p>
     </div>
   );
 }

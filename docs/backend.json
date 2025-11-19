@@ -81,46 +81,62 @@
       "type": "object",
       "description": "Represents a product listed on the Learn & Shop platform.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the product entity."
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "category": { "type": "string", "enum": ["Office Furniture", "Electronics", "Accessories"] },
+        "vendor": { "type": "string" },
+        "highlights": { "type": "array", "items": { "type": "string" } },
+        "specifications": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "value": { "type": "string" }
+            },
+            "required": ["name", "value"]
+          }
         },
-        "vendorId": {
-          "type": "string",
-          "description": "Reference to Vendor. (Relationship: Vendor 1:N Product)"
+        "variants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "color": { "type": "string" },
+              "mrp": { "type": "number" },
+              "price": { "type": "number" },
+              "stock": { "type": "number" },
+              "images": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "src": { "type": "string", "format": "uri" },
+                    "alt": { "type": "string" },
+                    "aiHint": { "type": "string" }
+                  },
+                  "required": ["src", "alt"]
+                }
+              }
+            },
+            "required": ["id", "color", "mrp", "price", "stock", "images"]
+          }
         },
-        "name": {
-          "type": "string",
-          "description": "Name of the product."
+        "offers": {
+          "type": "array",
+          "items": { "type": "string" }
         },
-        "description": {
-          "type": "string",
-          "description": "Description of the product."
-        },
-        "price": {
-          "type": "number",
-          "description": "Price of the product."
-        },
-        "imageUrl": {
-          "type": "string",
-          "description": "URL of the product image.",
-          "format": "uri"
-        },
-        "category": {
-            "type": "string",
-            "description": "The category of the product.",
-            "enum": ["Office Furniture", "Electronics", "Accessories"]
+        "services": {
+          "type": "object",
+          "properties": {
+            "warranty": { "type": "string" },
+            "returnPolicy": { "type": "string" }
+          }
         }
       },
-      "required": [
-        "id",
-        "vendorId",
-        "name",
-        "description",
-        "price",
-        "imageUrl",
-        "category"
-      ]
+      "required": ["id", "name", "description", "category", "vendor", "variants"]
     },
     "Course": {
       "$schema": "http://json-schema.org/draft-07/schema#",
