@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -25,9 +26,9 @@ const navItems = [
 ];
 
 const userNavItems = [
+  { href: '/account', label: 'My Account', icon: User },
   { href: '/account/orders', label: 'My Orders', icon: Package },
   { href: '/cart', label: 'My Cart', icon: ShoppingCart },
-  { href: '/account', label: 'My Account', icon: User },
   { href: '/faq', label: 'Help Centre', icon: HelpCircle },
 ];
 
