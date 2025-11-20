@@ -1,4 +1,3 @@
-
 'use client';
 
 import {
@@ -12,7 +11,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Logo } from './logo';
-import { Home, ShoppingBag, GraduationCap, ShoppingCart, HelpCircle, Package, User } from 'lucide-react';
+import { Home, ShoppingBag, GraduationCap, ShoppingCart, HelpCircle, Package, User, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -22,6 +21,7 @@ const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/products', label: 'Products', icon: ShoppingBag },
   { href: '/courses', label: 'Courses', icon: GraduationCap },
+  { href: '/vendor/dashboard', label: 'For Vendors', icon: LayoutDashboard },
 ];
 
 const userNavItems = [
