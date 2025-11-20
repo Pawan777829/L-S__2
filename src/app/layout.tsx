@@ -7,6 +7,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { CartProvider } from '@/lib/cart-context';
 import { FirebaseClientProvider } from '@/firebase';
 import Chatbot from '@/components/shared/chatbot';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { SiteSidebar } from '@/components/layout/site-sidebar';
 
 export const metadata: Metadata = {
   title: 'Learn & Shop - Unified Commerce and Learning',
@@ -31,10 +33,15 @@ export default function RootLayout({
       <body className="font-body antialiased flex flex-col min-h-screen">
         <FirebaseClientProvider>
           <CartProvider>
-            <Header />
-            <main className="flex-grow">{children}</main>
-            <Chatbot />
-            <Footer />
+            <SidebarProvider>
+              <SiteSidebar />
+              <div className="flex flex-col flex-1">
+                <Header />
+                <main className="flex-grow">{children}</main>
+                <Chatbot />
+                <Footer />
+              </div>
+            </SidebarProvider>
           </CartProvider>
         </FirebaseClientProvider>
         <Toaster />
@@ -42,5 +49,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-    

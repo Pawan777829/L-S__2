@@ -1,10 +1,9 @@
+
 'use client';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/layout/logo';
-import { MainNav } from '@/components/layout/main-nav';
-import { MobileNav } from '@/components/layout/mobile-nav';
 import { SearchBar } from '@/components/shared/search-bar';
 import { CartIcon } from '@/components/shared/cart-icon';
 import { Button } from '../ui/button';
@@ -21,6 +20,7 @@ import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { User as UserIcon, LogOut, LayoutDashboard, ShoppingCart, GraduationCap, User as ProfileIcon, LogIn, UserPlus } from 'lucide-react';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
 
 function UserNav() {
@@ -131,9 +131,9 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
-        <div className="flex gap-6 md:gap-10">
+        <div className="flex gap-4 items-center">
+          <SidebarTrigger className="md:hidden" />
           <Logo />
-          <MainNav />
         </div>
         <div className="flex flex-1 items-center justify-end space-x-4">
           <div className="hidden md:flex flex-1 max-w-sm">
@@ -142,7 +142,6 @@ export function Header() {
           <nav className="flex items-center space-x-2">
             <CartIcon />
             <UserNav />
-            <MobileNav />
           </nav>
         </div>
       </div>

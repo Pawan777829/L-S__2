@@ -1,9 +1,11 @@
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
+// This component is no longer used in the header but kept in case it's needed elsewhere.
 const navItems = [
   { href: '/products', label: 'Products' },
   { href: '/courses', label: 'Courses' },
