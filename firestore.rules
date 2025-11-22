@@ -14,9 +14,10 @@
  * - Cart: /users/{userId}/cart/{cartItemId}
  * - Orders: /users/{userId}/orders/{orderId}
  * - Enrollments: /users/{userId}/enrollments/{enrollmentId}
+ * - Addresses: /users/{userId}/addresses/{addressId}
  *
  * Key Security Decisions:
- * - Users can only access their own user documents and related data (cart, orders, enrollments).
+ * - Users can only access their own user documents and related data (cart, orders, enrollments, addresses).
  * - Product, Course, and Vendor information is publicly readable but requires backend management for CUD operations.
  * - All write operations are validated against the authenticated user's ID.
  */
@@ -74,6 +75,10 @@ service cloud.firestore {
       allow read: if isSignedIn() && isOwner(userId);
       allow write: if isSignedIn() && isOwner(userId) && isLearner(userId);
     }
+    
+    match /users/{userId}/addresses/{addressId} {
+      allow read, write: if isSignedIn() && isOwner(userId);
+    }
 
     match /users/{userId}/orders/{orderId} {
       allow read: if isSignedIn() && isOwner(userId);
@@ -86,3 +91,5 @@ service cloud.firestore {
     }
   }
 }
+
+    
