@@ -11,6 +11,10 @@
           "type": "string",
           "description": "Unique identifier for the user entity."
         },
+        "vendorId": {
+          "type": "string",
+          "description": "Optional reference to a Vendor entity if the user is a vendor."
+        },
         "firstName": {
           "type": "string",
           "description": "First name of the user."
@@ -52,11 +56,11 @@
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the vendor entity."
+          "description": "Unique identifier for the vendor entity, should match the user's UID."
         },
         "name": {
           "type": "string",
-          "description": "Name of the vendor."
+          "description": "Business Name of the vendor."
         },
         "description": {
           "type": "string",
@@ -66,13 +70,38 @@
           "type": "string",
           "description": "Contact email address for the vendor.",
           "format": "email"
+        },
+        "mobile": {
+          "type": "string",
+          "description": "Vendor's contact mobile number."
+        },
+        "gstin": {
+          "type": "string",
+          "description": "Vendor's GST Identification Number."
+        },
+        "pan": {
+          "type": "string",
+          "description": "Vendor's Permanent Account Number."
+        },
+        "bankDetails": {
+          "type": "string",
+          "description": "Vendor's bank account details for payouts."
+        },
+        "pickupAddress": {
+          "type": "string",
+          "description": "The address from where products will be picked up."
         }
       },
       "required": [
         "id",
         "name",
         "description",
-        "contactEmail"
+        "contactEmail",
+        "mobile",
+        "gstin",
+        "pan",
+        "bankDetails",
+        "pickupAddress"
       ]
     },
     "Product": {
@@ -300,7 +329,7 @@
           "schema": {
             "$ref": "#/backend/entities/Vendor"
           },
-          "description": "Stores vendor profile information.",
+          "description": "Stores vendor profile information. The vendorId should match the UID of the user who owns it.",
           "params": [
             {
               "name": "vendorId",
@@ -421,5 +450,3 @@
     "reasoning": "The Firestore data structure is designed to support the Learn & Shop platform, focusing on e-commerce and learning portal functionalities. It emphasizes authorization independence and efficient data retrieval. User data is stored under `/users/{userId}`. Vendors, Products, and Courses are structured to facilitate vendor management and product/course listings. The shopping cart functionality is implemented using `/users/{userId}/cart` and `/users/{userId}/cart/cartItems/{cartItemId}` to ensure user-specific cart data. \n\n**Authorization Independence:**\n\n*   User-specific data (cart, orders, enrollments) is nested under `/users/{userId}`, making authorization rules straightforward (only the user can access their data).\n\n**QAPs (Rules are not Filters):**\n\n*   **Secure List Operations:** The structure enables secure list operations for products and courses. Anyone should be able to list the available products or courses; Thus, they are not nested under user paths. If specific vendor access controls are needed for listing their own products/courses, consider a separate `/vendors/{vendorId}/products` and `/vendors/{vendorId}/courses` structure.\n\n**Vendors, Products and Courses**\n*   Vendors collection contains vendor profile data.\n*   Products are stored in the `/products` collection and contain a `vendorId` to link back to the vendor.\n*   Courses are stored in the `/courses` collection and contain a `vendorId` to link back to the vendor.\n\n**Cart, Orders, and Enrollments**\n*   Cart exists under `/users/{userId}/cart` since only the user should be able to access their cart.\n*   Cart items exist under `/users/{userId}/cart/cartItems/{cartItemId}`\n*   Orders are under `/users/{userId}/orders`.\n*   Enrollments are under `/users/{userId}/enrollments`.\n\n**Authentication:**\n*   Authentication handled by Firebase Authentication using email/password and anonymous sign-in.\n"
   }
 }
-    
-    

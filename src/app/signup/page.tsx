@@ -14,19 +14,34 @@ import { Logo } from '@/components/layout/logo';
 import { useAuth, useUser, useFirestore } from '@/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
-import { useEffect } from 'react';
-import { doc, setDoc } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
+import { doc, setDoc, writeBatch } from 'firebase/firestore';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Textarea } from '@/components/ui/textarea';
 
-const formSchema = z.object({
+const learnerSchema = z.object({
+  role: z.literal('learner'),
   firstName: z.string().min(1, { message: 'First name is required.' }),
   lastName: z.string().min(1, { message: 'Last name is required.' }),
   email: z.string().email({ message: 'Invalid email address.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
-  role: z.enum(['learner', 'vendor'], {
-    required_error: "You need to select a role."
-  }),
 });
+
+const vendorSchema = z.object({
+    role: z.literal('vendor'),
+    email: z.string().email({ message: 'Invalid email address.' }),
+    password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
+    businessName: z.string().min(2, "Business name is required"),
+    mobile: z.string().regex(/^\d{10}$/, "Please enter a valid 10-digit mobile number"),
+    gst: z.string().min(15, "GSTIN must be 15 characters").max(15),
+    pan: z.string().min(10, "PAN must be 10 characters").max(10),
+    bankDetails: z.string().min(10, "Please enter valid bank details"),
+    pickupAddress: z.string().min(10, "Pickup address is required"),
+});
+
+const formSchema = z.discriminatedUnion("role", [learnerSchema, vendorSchema]);
+type FormSchemaType = z.infer<typeof formSchema>;
+
 
 export default function SignupPage() {
   const router = useRouter();
@@ -34,17 +49,31 @@ export default function SignupPage() {
   const firestore = useFirestore();
   const { toast } = useToast();
   const { user, isUserLoading } = useUser();
+  const [selectedRole, setSelectedRole] = useState<'learner' | 'vendor'>('learner');
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: '',
-      lastName: '',
+      role: 'learner',
       email: '',
       password: '',
-      role: 'learner',
+      firstName: '',
+      lastName: '',
     },
   });
+  
+  const role = form.watch('role');
+
+  useEffect(() => {
+    if (role !== selectedRole) {
+        setSelectedRole(role);
+        form.reset({
+            ...form.getValues(),
+            // Reset fields that are not shared between forms
+        });
+    }
+  }, [role, form, selectedRole]);
+
 
   useEffect(() => {
     if (!isUserLoading && user) {
@@ -52,34 +81,66 @@ export default function SignupPage() {
     }
   }, [user, isUserLoading, router]);
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: FormSchemaType) => {
     if (!auth || !firestore) return;
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
-      const user = userCredential.user;
+      const newUser = userCredential.user;
+      
+      const batch = writeBatch(firestore);
 
-      const displayName = `${values.firstName} ${values.lastName}`.trim();
-      await updateProfile(user, {
-        displayName: displayName,
-      });
+      if (values.role === 'learner') {
+        const displayName = `${values.firstName} ${values.lastName}`.trim();
+        await updateProfile(newUser, { displayName });
 
-      const userRef = doc(firestore, 'users', user.uid);
-      await setDoc(userRef, {
-        id: user.uid,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        email: values.email,
-        registrationDate: new Date().toISOString(),
-        role: values.role,
-      });
+        const userRef = doc(firestore, 'users', newUser.uid);
+        batch.set(userRef, {
+            id: newUser.uid,
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            registrationDate: new Date().toISOString(),
+            role: 'learner',
+        });
+      } else if (values.role === 'vendor') {
+         await updateProfile(newUser, { displayName: values.businessName });
 
+         const userRef = doc(firestore, 'users', newUser.uid);
+         batch.set(userRef, {
+            id: newUser.uid,
+            firstName: values.businessName.split(' ')[0],
+            lastName: values.businessName.split(' ').slice(1).join(' '),
+            email: values.email,
+            registrationDate: new Date().toISOString(),
+            role: 'vendor',
+            vendorId: newUser.uid, // Linking user to vendor document
+         });
+         
+         const vendorRef = doc(firestore, 'vendors', newUser.uid);
+         batch.set(vendorRef, {
+            id: newUser.uid,
+            name: values.businessName,
+            contactEmail: values.email,
+            mobile: values.mobile,
+            gstin: values.gst,
+            pan: values.pan,
+            bankDetails: values.bankDetails,
+            pickupAddress: values.pickupAddress,
+            description: `Official store for ${values.businessName}`,
+         });
+      }
+
+      await batch.commit();
 
       toast({
         title: 'Account Created',
         description: "You've been successfully signed up!",
       });
-      router.push('/account');
+
+      const redirectTo = values.role === 'vendor' ? '/vendor/dashboard' : '/account';
+      router.push(redirectTo);
+
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -98,11 +159,11 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="container flex min-h-screen w-screen flex-col items-center justify-center bg-background">
+    <div className="container flex min-h-screen w-screen flex-col items-center justify-center bg-background py-12">
       <div className="absolute top-8 left-8">
         <Logo />
       </div>
-      <Card className="w-full max-w-md shadow-2xl">
+      <Card className="w-full max-w-lg shadow-2xl">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold font-headline">Create Your Account</CardTitle>
           <CardDescription>Join Learn & Shop today!</CardDescription>
@@ -110,34 +171,41 @@ export default function SignupPage() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="flex gap-4">
-                <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="John" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                 <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Doe" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>I want to sign up as a...</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex space-x-4"
+                      >
+                        <FormItem className="flex items-center space-x-2 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="learner" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Learner / Shopper
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-2 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="vendor" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Vendor / Seller
+                          </FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
               <FormField
                 control={form.control}
                 name="email"
@@ -164,40 +232,114 @@ export default function SignupPage() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Sign up as a...</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex space-x-4"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="learner" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Learner
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="vendor" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Vendor
-                          </FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
+              {selectedRole === 'learner' && (
+                <>
+                    <div className="flex gap-4">
+                        <FormField
+                        control={form.control}
+                        name="firstName"
+                        render={({ field }) => (
+                            <FormItem className="flex-1">
+                            <FormLabel>First Name</FormLabel>
+                            <FormControl>
+                                <Input placeholder="John" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                        <FormField
+                        control={form.control}
+                        name="lastName"
+                        render={({ field }) => (
+                            <FormItem className="flex-1">
+                            <FormLabel>Last Name</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Doe" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                    </div>
+                </>
+              )}
+              
+              {selectedRole === 'vendor' && (
+                <>
+                    <FormField
+                        control={form.control}
+                        name="businessName"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Business Name</FormLabel>
+                                <FormControl><Input placeholder="Your Company LLC" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                     <div className="flex gap-4">
+                        <FormField
+                            control={form.control}
+                            name="mobile"
+                            render={({ field }) => (
+                                <FormItem className="flex-1">
+                                    <FormLabel>Mobile Number</FormLabel>
+                                    <FormControl><Input placeholder="9876543210" {...field} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="gst"
+                            render={({ field }) => (
+                                <FormItem className="flex-1">
+                                    <FormLabel>GSTIN</FormLabel>
+                                    <FormControl><Input placeholder="15-digit GSTIN" {...field} /></FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                     </div>
+                      <FormField
+                        control={form.control}
+                        name="pan"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>PAN Number</FormLabel>
+                                <FormControl><Input placeholder="10-digit PAN" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                     <FormField
+                        control={form.control}
+                        name="bankDetails"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Bank Account Details</FormLabel>
+                                <FormControl><Input placeholder="Account number, IFSC code" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                     <FormField
+                        control={form.control}
+                        name="pickupAddress"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Pickup Address</FormLabel>
+                                <FormControl><Textarea placeholder="Full address for product pickups" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </>
+              )}
+
+
               <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                  {form.formState.isSubmitting ? 'Creating Account...' : 'Create Account'}
               </Button>

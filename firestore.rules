@@ -36,6 +36,10 @@ service cloud.firestore {
     function isLearner(userId) {
       return get(/databases/$(database)/documents/users/$(userId)).data.role == 'learner';
     }
+    
+    function isVendor(userId) {
+       return get(/databases/$(database)/documents/users/$(userId)).data.role == 'vendor';
+    }
 
     function isExistingOwner(userId) {
       return isSignedIn() && isOwner(userId) && resource != null;
@@ -50,7 +54,10 @@ service cloud.firestore {
 
     match /vendors/{vendorId} {
       allow get, list: if true;
-      allow create, update, delete: if false; 
+      // Allow a user to create their own vendor document if they are signed in,
+      // their UID matches the document ID, and their role is 'vendor'.
+      allow create: if isSignedIn() && isOwner(vendorId) && isVendor(vendorId);
+      allow update, delete: if false; // For now, prevent updates/deletes from client
     }
 
     match /products/{productId} {
@@ -79,6 +86,3 @@ service cloud.firestore {
     }
   }
 }
-    
-    
-    
