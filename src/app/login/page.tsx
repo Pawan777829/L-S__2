@@ -11,8 +11,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Logo } from '@/components/layout/logo';
-import { useAuth, useUser } from '@/firebase';
+import { useAuth, useUser, useFirestore } from '@/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect } from 'react';
 
@@ -24,6 +25,7 @@ const formSchema = z.object({
 export default function LoginPage() {
   const router = useRouter();
   const auth = useAuth();
+  const firestore = useFirestore();
   const { toast } = useToast();
   const { user, isUserLoading } = useUser();
 
@@ -36,21 +38,39 @@ export default function LoginPage() {
   });
 
   useEffect(() => {
+    // This effect is now less critical for redirection, but good for already-logged-in users.
     if (!isUserLoading && user) {
-      router.push('/account');
+      // Don't auto-redirect here as we want the onSubmit to handle it based on role.
+      // A user might be logged in but want to switch accounts.
     }
   }, [user, isUserLoading, router]);
 
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!auth) return;
+  const onSubmit = async (values: z.infer<typeof formSchema>>) => {
+    if (!auth || !firestore) return;
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      const loggedInUser = userCredential.user;
+
+      // Fetch user document from Firestore to check their role
+      const userDocRef = doc(firestore, 'users', loggedInUser.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      let redirectTo = '/account'; // Default redirect path
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.role === 'vendor') {
+          redirectTo = '/vendor/dashboard';
+        }
+      }
+
       toast({
         title: 'Login Successful',
         description: 'Welcome back!',
       });
-      router.push('/account');
+
+      router.push(redirectTo);
+
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -60,7 +80,7 @@ export default function LoginPage() {
     }
   };
   
-  if (isUserLoading || user) {
+  if (isUserLoading) { // simplified loading state
     return (
       <div className="container flex h-screen w-screen flex-col items-center justify-center">
         <p>Loading...</p>
@@ -126,5 +146,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-    
