@@ -14,19 +14,17 @@ import { Skeleton } from '@/components/ui/skeleton';
 function CartItem({ item }: { item: CartItemType }) {
   const { updateQuantity, removeFromCart } = useCart();
   
-  // The item in the cart now contains the full details we need.
   const productOrCourse = item.item;
-  const linkHref = item.type === 'product' ? `/products/${productOrCourse.id.split('-')[1]}` : `/courses/${productOrCourse.id}`;
+  const linkHref = item.type === 'product' ? `/products/${productOrCourse.originalId}` : `/courses/${productOrCourse.id}`;
 
 
   return (
-    <div className="flex items-center gap-4 py-4">
-      <Link href={linkHref} className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border">
+    <div className="flex items-start sm:items-center gap-4 py-4 flex-col sm:flex-row">
+      <Link href={linkHref} className="relative h-24 w-24 flex-shrink-0 self-center sm:self-start overflow-hidden rounded-md border">
         <Image
           src={productOrCourse.image.src}
           alt={productOrCourse.image.alt}
-          width={96}
-          height={96}
+          fill
           className="object-cover"
         />
       </Link>
@@ -34,7 +32,7 @@ function CartItem({ item }: { item: CartItemType }) {
          <Link href={linkHref}>
           <h3 className="font-semibold hover:underline">{productOrCourse.name}</h3>
         </Link>
-        <p className="text-sm text-muted-foreground">₹{productOrCourse.price.toFixed(2)}</p>
+        <p className="text-sm text-muted-foreground mt-1">₹{productOrCourse.price.toFixed(2)}</p>
         <div className="mt-2 flex items-center gap-2">
           <Input
             type="number"
@@ -42,6 +40,7 @@ function CartItem({ item }: { item: CartItemType }) {
             value={item.quantity}
             onChange={(e) => updateQuantity(item.id, parseInt(e.target.value, 10))}
             className="h-9 w-20"
+            aria-label={`Quantity for ${productOrCourse.name}`}
           />
           <Button variant="ghost" size="icon" onClick={() => removeFromCart(item.id)}>
             <Trash2 className="h-4 w-4 text-muted-foreground" />
@@ -49,7 +48,7 @@ function CartItem({ item }: { item: CartItemType }) {
           </Button>
         </div>
       </div>
-      <p className="font-semibold">₹{(productOrCourse.price * item.quantity).toFixed(2)}</p>
+      <p className="font-semibold self-end sm:self-center">₹{(productOrCourse.price * item.quantity).toFixed(2)}</p>
     </div>
   );
 }
@@ -57,7 +56,7 @@ function CartItem({ item }: { item: CartItemType }) {
 function CartLoader() {
  return (
     <div className="container mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold mb-8 font-headline">Your Cart</h1>
+      <Skeleton className="h-10 w-48 mb-8" />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2">
           <Card>
@@ -135,7 +134,7 @@ export default function CartPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <h1 className="text-4xl font-bold mb-8 font-headline">Your Cart</h1>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
