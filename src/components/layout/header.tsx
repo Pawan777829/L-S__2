@@ -69,7 +69,7 @@ function UserNav() {
             <span>Sign Up</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-           <DropdownMenuItem onClick={() => router.push('/vendor/dashboard')}>
+           <DropdownMenuItem onClick={() => router.push('/signup?role=vendor')}>
             <LayoutDashboard className="mr-2 h-4 w-4" />
             <span>Become a Vendor</span>
           </DropdownMenuItem>

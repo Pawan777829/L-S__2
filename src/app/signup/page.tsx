@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -14,7 +14,7 @@ import { Logo } from '@/components/layout/logo';
 import { useAuth, useUser, useFirestore } from '@/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { doc, setDoc, writeBatch } from 'firebase/firestore';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
@@ -43,22 +43,31 @@ const formSchema = z.discriminatedUnion("role", [learnerSchema, vendorSchema]);
 type FormSchemaType = z.infer<typeof formSchema>;
 
 
-export default function SignupPage() {
+function SignupFormComponent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const auth = useAuth();
   const firestore = useFirestore();
   const { toast } = useToast();
   const { user, isUserLoading } = useUser();
-  const [selectedRole, setSelectedRole] = useState<'learner' | 'vendor'>('learner');
+  
+  const defaultRole = searchParams.get('role') === 'vendor' ? 'vendor' : 'learner';
+  const [selectedRole, setSelectedRole] = useState<'learner' | 'vendor'>(defaultRole);
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      role: 'learner',
+      role: defaultRole,
       email: '',
       password: '',
-      firstName: '',
-      lastName: '',
+      ...(defaultRole === 'learner' ? { firstName: '', lastName: '' } : { 
+        businessName: '', 
+        mobile: '',
+        gst: '',
+        pan: '',
+        bankDetails: '',
+        pickupAddress: '',
+      }),
     },
   });
   
@@ -67,9 +76,23 @@ export default function SignupPage() {
   useEffect(() => {
     if (role !== selectedRole) {
         setSelectedRole(role);
-        form.reset({
-            ...form.getValues(),
-            // Reset fields that are not shared between forms
+        // Reset the form with default values for the new role
+        form.reset(role === 'learner' ? {
+            role: 'learner',
+            email: '',
+            password: '',
+            firstName: '',
+            lastName: '',
+        } : {
+            role: 'vendor',
+            email: '',
+            password: '',
+            businessName: '',
+            mobile: '',
+            gst: '',
+            pan: '',
+            bankDetails: '',
+            pickupAddress: '',
         });
     }
   }, [role, form, selectedRole]);
@@ -357,4 +380,12 @@ export default function SignupPage() {
       </Card>
     </div>
   );
+}
+
+export default function SignupPage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <SignupFormComponent />
+        </Suspense>
+    )
 }
