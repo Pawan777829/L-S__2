@@ -51,16 +51,15 @@ function SignupFormComponent() {
   const { toast } = useToast();
   const { user, isUserLoading } = useUser();
   
-  const defaultRole = searchParams.get('role') === 'vendor' ? 'vendor' : 'learner';
-  const [selectedRole, setSelectedRole] = useState<'learner' | 'vendor'>(defaultRole);
+  const roleFromUrl = searchParams.get('role') === 'vendor' ? 'vendor' : 'learner';
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      role: defaultRole,
+      role: roleFromUrl,
       email: '',
       password: '',
-      ...(defaultRole === 'learner' ? { firstName: '', lastName: '' } : { 
+      ...(roleFromUrl === 'learner' ? { firstName: '', lastName: '' } : { 
         businessName: '', 
         mobile: '',
         gst: '',
@@ -70,33 +69,6 @@ function SignupFormComponent() {
       }),
     },
   });
-  
-  const role = form.watch('role');
-
-  useEffect(() => {
-    if (role !== selectedRole) {
-        setSelectedRole(role);
-        // Reset the form with default values for the new role
-        form.reset(role === 'learner' ? {
-            role: 'learner',
-            email: '',
-            password: '',
-            firstName: '',
-            lastName: '',
-        } : {
-            role: 'vendor',
-            email: '',
-            password: '',
-            businessName: '',
-            mobile: '',
-            gst: '',
-            pan: '',
-            bankDetails: '',
-            pickupAddress: '',
-        });
-    }
-  }, [role, form, selectedRole]);
-
 
   useEffect(() => {
     if (!isUserLoading && user) {
@@ -189,45 +161,13 @@ function SignupFormComponent() {
       <Card className="w-full max-w-lg shadow-2xl">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold font-headline">Create Your Account</CardTitle>
-          <CardDescription>Join Learn & Shop today!</CardDescription>
+          <CardDescription>
+            {roleFromUrl === 'vendor' ? 'Create a vendor account to start selling' : 'Join Learn & Shop today!'}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>I want to sign up as a...</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex space-x-4"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="learner" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Learner / Shopper
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="vendor" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Vendor / Seller
-                          </FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               
               <FormField
                 control={form.control}
@@ -256,7 +196,7 @@ function SignupFormComponent() {
                 )}
               />
 
-              {selectedRole === 'learner' && (
+              {roleFromUrl === 'learner' && (
                 <>
                     <div className="flex gap-4">
                         <FormField
@@ -289,7 +229,7 @@ function SignupFormComponent() {
                 </>
               )}
               
-              {selectedRole === 'vendor' && (
+              {roleFromUrl === 'vendor' && (
                 <>
                     <FormField
                         control={form.control}
