@@ -58,7 +58,8 @@ service cloud.firestore {
       // Allow a user to create their own vendor document if they are signed in,
       // their UID matches the document ID, and their role is 'vendor'.
       allow create: if isSignedIn() && isOwner(vendorId) && isVendor(vendorId);
-      allow update, delete: if false; // For now, prevent updates/deletes from client
+      allow update: if isSignedIn() && isOwner(vendorId) && isVendor(vendorId);
+      allow delete: if false; // For now, prevent deletes from client
     }
 
     match /products/{productId} {
@@ -91,5 +92,3 @@ service cloud.firestore {
     }
   }
 }
-
-    
