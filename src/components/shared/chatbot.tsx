@@ -73,7 +73,7 @@ export default function Chatbot() {
         <Button
           variant="default"
           size="icon"
-          className="fixed bottom-6 right-6 h-16 w-16 rounded-full shadow-lg"
+          className="fixed bottom-6 left-6 h-16 w-16 rounded-full shadow-lg"
         >
           {isOpen ? <X className="h-8 w-8" /> : <MessageSquare className="h-8 w-8" />}
           <span className="sr-only">Toggle Chat</span>
@@ -81,8 +81,8 @@ export default function Chatbot() {
       </PopoverTrigger>
       <PopoverContent
         side="top"
-        align="end"
-        className="w-[90vw] max-w-sm p-0 rounded-lg shadow-2xl mr-4 mb-2"
+        align="start"
+        className="w-[90vw] max-w-sm p-0 rounded-lg shadow-2xl ml-4 mb-2"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <div className="flex flex-col h-[60vh]">
@@ -158,5 +158,3 @@ export default function Chatbot() {
     </Popover>
   );
 }
-
-    
