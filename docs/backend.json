@@ -28,6 +28,15 @@
           "description": "Email address of the user.",
           "format": "email"
         },
+        "mobile": {
+          "type": "string",
+          "description": "The user's mobile number."
+        },
+        "gender": {
+          "type": "string",
+          "description": "The gender of the user.",
+          "enum": ["male", "female", "other"]
+        },
         "registrationDate": {
           "type": "string",
           "description": "Date and time the user registered.",
