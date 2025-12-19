@@ -91,9 +91,9 @@ export default function ProductPage() {
               />
             </div>
             <div className="grid grid-cols-5 gap-2">
-              {selectedVariant.images.map((image, index) => (
+              {selectedVariant.images.map((image) => (
                 <button
-                  key={index}
+                  key={image.src}
                   className={cn(
                     "relative aspect-square w-full rounded-md border-2 overflow-hidden",
                     image.src === activeImage?.src ? "border-primary" : "border-border"
@@ -174,8 +174,8 @@ export default function ProductPage() {
                     <CardTitle className="text-lg">Available Offers</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm">
-                    {product.offers.map((offer, index) => (
-                        <div key={index} className="flex items-start gap-2">
+                    {product.offers.map((offer) => (
+                        <div key={offer} className="flex items-start gap-2">
                             <Tag className="h-4 w-4 mt-0.5 text-primary flex-shrink-0"/>
                             <p>
                                 <span className="font-semibold">Bank Offer:</span> {offer} <span className="text-primary font-semibold cursor-pointer">T&C</span>
@@ -201,8 +201,8 @@ export default function ProductPage() {
             <div>
                 <h3 className="font-bold text-lg font-headline mb-2">Highlights</h3>
                 <ul className="space-y-2 text-sm list-disc list-inside text-muted-foreground">
-                    {product.highlights.map((highlight, index) => (
-                        <li key={index}>{highlight}</li>
+                    {product.highlights.map((highlight) => (
+                        <li key={highlight}>{highlight}</li>
                     ))}
                 </ul>
             </div>
@@ -222,8 +222,8 @@ export default function ProductPage() {
                 <h3 className="font-bold text-lg font-headline mb-4">Specifications</h3>
                 <table className="w-full text-sm">
                     <tbody>
-                        {product.specifications.map((spec, index) => (
-                            <tr key={index} className="border-b">
+                        {product.specifications.map((spec) => (
+                            <tr key={spec.name} className="border-b">
                                 <td className="py-2 text-muted-foreground w-1/3">{spec.name}</td>
                                 <td className="py-2">{spec.value}</td>
                             </tr>

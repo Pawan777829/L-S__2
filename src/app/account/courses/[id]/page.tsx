@@ -97,9 +97,9 @@ export default function CoursePlayerPage() {
                                 <CardTitle>Course Content</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                 <Accordion type="single" collapsible defaultValue="item-0" className="w-full">
-                                    {curriculum.map((item, index) => (
-                                        <AccordionItem value={`item-${index}`} key={index}>
+                                 <Accordion type="single" collapsible defaultValue="Introduction to the Course" className="w-full">
+                                    {curriculum.map((item) => (
+                                        <AccordionItem value={item.title} key={item.title}>
                                             <AccordionTrigger disabled={item.isLocked && !isEnrolled}>
                                                 <div className="flex justify-between items-center w-full pr-4">
                                                     <span className="text-left">{item.title}</span>
@@ -124,4 +124,3 @@ export default function CoursePlayerPage() {
         </AuthenticatedRouteGuard>
     );
 }
-

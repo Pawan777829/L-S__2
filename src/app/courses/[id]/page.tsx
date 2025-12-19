@@ -163,8 +163,8 @@ export default function CoursePage() {
 
             <h2 className="text-2xl font-bold font-headline mb-4">Course content</h2>
             <Accordion type="single" collapsible className="w-full">
-                {curriculum.map((item, index) => (
-                    <AccordionItem value={`item-${index}`} key={index}>
+                {curriculum.map((item) => (
+                    <AccordionItem value={item.title} key={item.title}>
                         <AccordionTrigger>
                             <div className="flex justify-between w-full pr-4">
                                 <span>{item.title}</span>
@@ -253,5 +253,3 @@ export default function CoursePage() {
     </div>
   );
 }
-
-    
