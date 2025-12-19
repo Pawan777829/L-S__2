@@ -18,7 +18,8 @@
  *
  * Key Security Decisions:
  * - Users can only access their own user documents and related data (cart, orders, enrollments, addresses).
- * - Product, Course, and Vendor information is publicly readable but requires backend management for CUD operations.
+ * - Product, Course, and Vendor information is publicly readable.
+ * - Vendors can create and update products and courses they own.
  * - All write operations are validated against the authenticated user's ID.
  */
 rules_version = '2';
@@ -64,12 +65,18 @@ service cloud.firestore {
 
     match /products/{productId} {
       allow get, list: if true;
-      allow create, update, delete: if false;
+      // Allow create/update if the user is a signed-in vendor and the product's vendor field matches their UID.
+      allow create: if isSignedIn() && isVendor(request.auth.uid) && request.resource.data.vendorId == request.auth.uid;
+      allow update: if isSignedIn() && isVendor(request.auth.uid) && get(/databases/$(database)/documents/products/$(productId)).data.vendorId == request.auth.uid;
+      allow delete: if false;
     }
 
     match /courses/{courseId} {
       allow get, list: if true;
-      allow create, update, delete: if false;
+      // Allow create/update if the user is a signed-in vendor and the course's vendorId field matches their UID.
+      allow create: if isSignedIn() && isVendor(request.auth.uid) && request.resource.data.vendorId == request.auth.uid;
+      allow update: if isSignedIn() && isVendor(request.auth.uid) && get(/databases/$(database)/documents/courses/$(courseId)).data.vendorId == request.auth.uid;
+      allow delete: if false;
     }
 
     match /users/{userId}/cart/{cartItemId} {
