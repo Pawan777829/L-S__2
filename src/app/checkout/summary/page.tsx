@@ -13,7 +13,7 @@ import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowRight } from 'lucide-react';
 import type { Address } from '@/app/checkout/page';
 import { CheckoutStepper } from '@/components/shared/checkout-stepper';
 
@@ -33,8 +33,7 @@ function OrderSummaryContent() {
     const firestore = useFirestore();
     const router = useRouter();
     const searchParams = useSearchParams();
-    const { cartItems, cartTotal, cartCount, clearCart, isLoading: isCartLoading } = useCart();
-    const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+    const { cartItems, cartTotal, cartCount, isLoading: isCartLoading } = useCart();
     const { toast } = useToast();
 
     const addressId = searchParams.get('addressId');
@@ -54,48 +53,9 @@ function OrderSummaryContent() {
     }, [isAddressLoading, selectedAddress, router, toast])
 
 
-    const handlePlaceOrder = async () => {
-        if (!user || !selectedAddress || cartCount === 0) return;
-        
-        setIsPlacingOrder(true);
-
-        const orderData = {
-            userId: user.uid,
-            shippingAddress: selectedAddress,
-            items: cartItems.map(item => ({ 
-                itemId: item.item.originalId,
-                variantId: item.item.variantId,
-                name: item.item.name,
-                price: item.item.price,
-                quantity: item.quantity,
-                type: item.type,
-             })),
-            total: cartTotal,
-            status: 'Processing',
-            date: new Date().toISOString(),
-        };
-
-        try {
-            const ordersCollectionRef = collection(firestore, 'users', user.uid, 'orders');
-            await addDoc(ordersCollectionRef, orderData);
-            
-            await clearCart();
-
-            toast({
-                title: "Order Placed!",
-                description: "Thank you for your purchase.",
-            });
-
-            router.push('/account/orders');
-
-        } catch (error: any) {
-            toast({
-                variant: 'destructive',
-                title: "Order Failed",
-                description: error.message || "Could not place your order.",
-            });
-             setIsPlacingOrder(false);
-        }
+    const handleContinueToPayment = () => {
+        if (!addressId) return;
+        router.push(`/checkout/payment?addressId=${addressId}`);
     };
     
     const pageIsLoading = isCartLoading || isAddressLoading;
@@ -156,8 +116,8 @@ function OrderSummaryContent() {
                     <p className="text-lg font-bold">₹{cartTotal.toFixed(2)}</p>
                     <p className="text-xs text-primary underline cursor-pointer">View price details</p>
                  </div>
-                 <Button size="lg" disabled={cartCount === 0 || isPlacingOrder} onClick={handlePlaceOrder}>
-                    {isPlacingOrder ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Placing Order...</> : 'Continue to Payment'}
+                 <Button size="lg" disabled={cartCount === 0} onClick={handleContinueToPayment}>
+                    Continue to Payment <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
             </div>
         </AuthenticatedRouteGuard>
