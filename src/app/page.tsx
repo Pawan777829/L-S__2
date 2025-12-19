@@ -1,15 +1,68 @@
 
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
-
 import { Button } from '@/components/ui/button';
 import { getProducts, getCourses } from '@/lib/placeholder-data';
 import ProductCard from '@/components/shared/product-card';
 import CourseCard from '@/components/shared/course-card';
+import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
   const featuredProducts = getProducts().slice(0, 4);
   const featuredCourses = getCourses().slice(0, 4);
+  
+  const { user: authUser, isUserLoading } = useUser();
+  const firestore = useFirestore();
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!authUser) return null;
+    return doc(firestore, 'users', authUser.uid);
+  }, [authUser, firestore]);
+
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
+  
+  const isVendor = userProfile?.role === 'vendor';
+  const isLoading = isUserLoading || isProfileLoading;
+
+
+  const renderHeroButtons = () => {
+    if (isLoading) {
+      return (
+        <div className="flex justify-center gap-4">
+          <Skeleton className="h-12 w-40" />
+          <Skeleton className="h-12 w-40" />
+        </div>
+      );
+    }
+    
+    if (isVendor) {
+      return (
+         <div className="flex justify-center gap-4">
+          <Button asChild size="lg">
+            <Link href="/vendor/dashboard">Manage Your Store</Link>
+          </Button>
+          <Button asChild size="lg" variant="secondary">
+            <Link href="/vendor/products/new">Add New Product</Link>
+          </Button>
+        </div>
+      )
+    }
+
+    return (
+      <div className="flex justify-center gap-4">
+        <Button asChild size="lg">
+          <Link href="/products">Explore Products</Link>
+        </Button>
+        <Button asChild size="lg" variant="secondary">
+          <Link href="/courses">Discover Courses</Link>
+        </Button>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col">
@@ -29,14 +82,7 @@ export default function Home() {
           <p className="text-lg md:text-2xl mb-8 max-w-3xl mx-auto drop-shadow-md">
             Your unified marketplace for products and learning.
           </p>
-          <div className="flex justify-center gap-4">
-            <Button asChild size="lg">
-              <Link href="/products">Explore Products</Link>
-            </Button>
-            <Button asChild size="lg" variant="secondary">
-              <Link href="/courses">Discover Courses</Link>
-            </Button>
-          </div>
+          {renderHeroButtons()}
         </div>
       </section>
 
@@ -97,5 +143,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
