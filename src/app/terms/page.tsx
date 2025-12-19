@@ -1,11 +1,20 @@
 
+'use client';
+
+import { useState, useEffect } from 'react';
+
 export default function TermsOfUsePage() {
+  const [date, setDate] = useState('');
+  useEffect(() => {
+    setDate(new Date().toLocaleDateString());
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="prose dark:prose-invert max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-8 font-headline">Terms of Use</h1>
         
-        <p>Last updated: {new Date().toLocaleDateString()}</p>
+        <p>Last updated: {date}</p>
         
         <h2>1. Agreement to Terms</h2>
         <p>
@@ -35,5 +44,3 @@ export default function TermsOfUsePage() {
     </div>
   );
 }
-
-    

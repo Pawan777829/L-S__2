@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Logo } from '@/components/layout/logo';
 import { useAuth, useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState } from 'react';
 import { useDoc } from '@/firebase/firestore/use-doc';
@@ -59,7 +59,7 @@ export default function LoginPage() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!auth || !firestore) return;
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      await signInWithEmailAndPassword(auth, values.email, values.password);
       // The useEffect above will handle the redirection once the user and profile are loaded.
       toast({
         title: 'Login Successful',
