@@ -32,12 +32,12 @@ const vendorSchema = z.object({
     role: z.literal('vendor'),
     email: z.string().email({ message: 'Invalid email address.' }),
     password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
-    businessName: z.string().min(2, "Business name is required"),
-    mobile: z.string().regex(/^\d{10}$/, "Please enter a valid 10-digit mobile number"),
-    gst: z.string().min(15, "GSTIN must be 15 characters").max(15),
-    pan: z.string().min(10, "PAN must be 10 characters").max(10),
-    bankDetails: z.string().min(10, "Please enter valid bank details"),
-    pickupAddress: z.string().min(10, "Pickup address is required"),
+    businessName: z.string().min(1, "Business name is required"),
+    mobile: z.string().min(1, "Please enter a mobile number"),
+    gst: z.string().min(1, "GSTIN is required"),
+    pan: z.string().min(1, "PAN is required"),
+    bankDetails: z.string().min(1, "Please enter bank details"),
+    pickupAddress: z.string().min(1, "Pickup address is required"),
 });
 
 const formSchema = z.discriminatedUnion("role", [learnerSchema, vendorSchema]);
