@@ -22,6 +22,7 @@ interface Enrollment {
 
 interface EnrolledCourse extends Course {
   progress: number;
+  enrollmentId: string;
 }
 
 function EnrolledCoursesLoader() {
@@ -62,7 +63,8 @@ export default function EnrolledCoursesPage() {
         if (courseDetails) {
           return {
             ...courseDetails,
-            progress: enrollment.progress
+            progress: enrollment.progress,
+            enrollmentId: enrollment.id,
           };
         }
         return null;
@@ -91,7 +93,7 @@ export default function EnrolledCoursesPage() {
           ) : enrolledCourses.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {enrolledCourses.map((course) => (
-                    <Card key={course.id} className="flex flex-col">
+                    <Card key={course.enrollmentId} className="flex flex-col">
                         <div className="relative aspect-video w-full">
                             <Image src={course.image.src} alt={course.image.alt} fill className="rounded-t-lg object-cover" />
                         </div>
