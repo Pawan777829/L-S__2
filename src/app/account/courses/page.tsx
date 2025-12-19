@@ -110,7 +110,7 @@ export default function EnrolledCoursesPage() {
                         </CardContent>
                         <div className="p-4 pt-0">
                              <Button asChild className="w-full">
-                                <Link href={`/courses/${course.id}`}>
+                                <Link href={`/account/courses/${course.id}`}>
                                     {course.progress > 0 ? 'Continue Learning' : 'Start Learning'} <PlayCircle className="ml-2 h-4 w-4" />
                                 </Link>
                             </Button>
