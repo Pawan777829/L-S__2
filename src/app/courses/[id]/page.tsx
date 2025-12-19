@@ -6,14 +6,14 @@ import { getCourseById, getCourses, Course } from '@/lib/placeholder-data';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/lib/cart-context';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { ShoppingCart, Star, Clock, BookOpen, User, CheckCircle } from 'lucide-react';
+import { ShoppingCart, Star, Clock, BookOpen, User, CheckCircle, PlaySquare } from 'lucide-react';
 import CourseCard from '@/components/shared/course-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { useUser } from '@/firebase';
-import { useState } from 'react';
+import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { useState, useEffect } from 'react';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -24,6 +24,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { doc } from 'firebase/firestore';
 
 const curriculum = [
     { title: "Introduction", details: "1 video (12 min)", locked: false },
@@ -60,7 +61,8 @@ function CoursePageLoader() {
 export default function CoursePage() {
   const params = useParams();
   const router = useRouter();
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
   const { id } = params;
   const course = getCourseById(id as string);
   const relatedCourses = getCourses().filter(c => c.id !== id).slice(0, 2);
@@ -68,24 +70,38 @@ export default function CoursePage() {
   const { addToCart, cartItems } = useCart();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
+  // Check for enrollment
+  const enrollmentDocRef = useMemoFirebase(() => {
+      if (!user || !id) return null;
+      // Note: This assumes a predictable enrollment ID. A query might be more robust.
+      // For this example, we'll construct the path. Let's assume enrollmentId is the courseId for simplicity.
+      return doc(firestore, 'users', user.uid, 'enrollments', id as string);
+  }, [user, firestore, id]);
+
+  const { data: enrollment, isLoading: isEnrollmentLoading } = useDoc(enrollmentDocRef);
+  const isEnrolled = !!enrollment;
+
   const handleEnroll = () => {
     if (!user) {
       setShowLoginDialog(true);
       return;
     } 
     if (course) {
-      // Check if any physical items are in the cart
       const hasPhysicalItems = cartItems.some(item => item.type === 'product');
       addToCart(course, 'course');
-      // If only courses will be in the cart, go to payment, otherwise go to standard checkout
       if (hasPhysicalItems) {
         router.push('/checkout');
+      } else if (cartItems.length > 0) {
+        // If there are other courses in the cart, go to cart page
+        router.push('/cart');
       } else {
-        router.push('/checkout/payment?addressId=digital');
+        // If it's just this one course, go straight to payment
+        router.push(`/checkout/payment?addressId=digital`);
       }
     }
   };
-
+  
+  const isLoading = isUserLoading || isEnrollmentLoading;
 
   if (!course) {
     return <CoursePageLoader />;
@@ -97,35 +113,55 @@ export default function CoursePage() {
         <div className="grid md:grid-cols-3 gap-x-12 items-start">
           {/* Left Column - Course Details */}
           <div className="md:col-span-2">
-            <p className="text-sm font-medium text-primary mb-2">Online Course</p>
+             {isEnrolled && (
+              <p className="text-sm font-medium text-primary mb-2">YOU ARE ENROLLED</p>
+            )}
             <h1 className="text-3xl md:text-4xl font-bold font-headline">
               {course.name}
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">{course.description}</p>
             
-            <div className="flex items-center gap-4 mt-4">
-                <div className="flex items-center gap-1">
-                    <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
-                    <span className="text-sm font-bold">4.7</span>
-                    <span className="text-sm text-muted-foreground">(3,450 ratings)</span>
+            {!isEnrolled && (
+                <>
+                <div className="flex items-center gap-4 mt-4">
+                    <div className="flex items-center gap-1">
+                        <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
+                        <span className="text-sm font-bold">4.7</span>
+                        <span className="text-sm text-muted-foreground">(3,450 ratings)</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <User className="h-4 w-4" />
+                        <span>12,890 students</span>
+                    </div>
                 </div>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                    <User className="h-4 w-4" />
-                    <span>12,890 students</span>
-                </div>
-            </div>
-             <p className="text-sm text-muted-foreground mt-2">
-                Created by <span className="font-medium text-foreground">{course.instructor}</span>
-            </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                    Created by <span className="font-medium text-foreground">{course.instructor}</span>
+                </p>
+                </>
+            )}
 
-            <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-lg mt-8">
-              <Image
-                src={course.image.src}
-                alt={course.image.alt}
-                fill
-                className="object-cover"
-                data-ai-hint={course.image.aiHint}
-              />
+            <div className="relative w-full aspect-video rounded-lg bg-black overflow-hidden shadow-lg mt-8 flex items-center justify-center">
+              {isEnrolled ? (
+                <>
+                    <div className="absolute inset-0 bg-black/50 z-10" />
+                    <PlaySquare className="h-20 w-20 text-white z-20" />
+                    <Image
+                        src={course.image.src}
+                        alt={course.image.alt}
+                        fill
+                        className="object-cover opacity-50"
+                     />
+                </>
+              ) : (
+                 <Image
+                    src={course.image.src}
+                    alt={course.image.alt}
+                    fill
+                    className="object-cover"
+                    data-ai-hint={course.image.aiHint}
+                />
+              )}
+             
             </div>
             
             <Card className="my-8">
@@ -153,35 +189,49 @@ export default function CoursePage() {
                             </div>
                         </AccordionTrigger>
                         <AccordionContent>
-                           {item.locked ? "Purchase the course to unlock this content." : "Detailed content for this section goes here."}
+                           {(item.locked && !isEnrolled) ? "Purchase the course to unlock this content." : "Detailed content for this section goes here. This would contain lecture videos, notes, and resources."}
                         </AccordionContent>
                     </AccordionItem>
                 ))}
             </Accordion>
           </div>
 
-          {/* Right Column - Purchase Card */}
+          {/* Right Column - Purchase Card or Progress */}
           <div className="sticky top-24">
-            <Card className="shadow-2xl">
-                 <CardHeader>
-                    <p className="text-4xl font-bold font-headline">₹{course.price.toFixed(2)}</p>
-                </CardHeader>
-                <CardContent>
-                    <Button size="lg" onClick={handleEnroll} className="w-full">
-                        Enroll Now
-                    </Button>
-                     <Button size="lg" variant="outline" onClick={() => course && addToCart(course, 'course')} className="w-full mt-2">
-                        Add to Cart
-                    </Button>
-                    <p className="text-xs text-muted-foreground text-center mt-2">30-Day Money-Back Guarantee</p>
-                    <Separator className="my-4" />
-                    <h3 className="font-semibold mb-2">This course includes:</h3>
-                    <ul className="space-y-2 text-sm text-muted-foreground">
-                        <li className="flex items-center gap-3"><Clock /><span>8.5 hours on-demand video</span></li>
-                        <li className="flex items-center gap-3"><BookOpen /><span>12 articles & resources</span></li>
-                    </ul>
-                </CardContent>
-            </Card>
+            {isLoading ? (
+                <Skeleton className="h-64 w-full" />
+            ) : isEnrolled ? (
+                <Card className="shadow-2xl">
+                    <CardHeader>
+                        <CardTitle>You are enrolled!</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                         <p className="text-sm text-muted-foreground">Continue where you left off or review the course materials.</p>
+                         <Button size="lg" className="w-full">Mark as Complete</Button>
+                    </CardContent>
+                </Card>
+            ) : (
+                <Card className="shadow-2xl">
+                    <CardHeader>
+                        <p className="text-4xl font-bold font-headline">₹{course.price.toFixed(2)}</p>
+                    </CardHeader>
+                    <CardContent>
+                        <Button size="lg" onClick={handleEnroll} className="w-full">
+                            Enroll Now
+                        </Button>
+                        <Button size="lg" variant="outline" onClick={() => course && addToCart(course, 'course')} className="w-full mt-2">
+                            Add to Cart
+                        </Button>
+                        <p className="text-xs text-muted-foreground text-center mt-2">30-Day Money-Back Guarantee</p>
+                        <Separator className="my-4" />
+                        <h3 className="font-semibold mb-2">This course includes:</h3>
+                        <ul className="space-y-2 text-sm text-muted-foreground">
+                            <li className="flex items-center gap-3"><Clock /><span>8.5 hours on-demand video</span></li>
+                            <li className="flex items-center gap-3"><BookOpen /><span>12 articles & resources</span></li>
+                        </ul>
+                    </CardContent>
+                </Card>
+            )}
           </div>
         </div>
       </div>
