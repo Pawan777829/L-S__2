@@ -80,22 +80,8 @@ export default function ProductPage() {
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-2 gap-12 items-start">
           {/* Product Image Gallery */}
-          <div className="flex flex-col-reverse md:flex-row gap-4 sticky top-24">
-            <div className="flex md:flex-col gap-2">
-              {selectedVariant.images.map((image, index) => (
-                <button
-                  key={index}
-                  className={cn(
-                    "relative aspect-square w-16 h-16 rounded-md border-2 overflow-hidden",
-                    image.src === activeImage?.src ? "border-primary" : "border-border"
-                  )}
-                  onClick={() => setActiveImage(image)}
-                >
-                  <Image src={image.src} alt={image.alt} fill className="object-cover" />
-                </button>
-              ))}
-            </div>
-            <div className="relative w-full aspect-square rounded-lg overflow-hidden shadow-lg flex-1">
+          <div className="grid grid-cols-1 gap-4 sticky top-24">
+             <div className="relative w-full aspect-square rounded-lg overflow-hidden shadow-lg">
               <Image
                 src={activeImage?.src || product.variants[0].images[0].src}
                 alt={activeImage?.alt || product.variants[0].images[0].alt}
@@ -103,6 +89,20 @@ export default function ProductPage() {
                 className="object-cover"
                 data-ai-hint={activeImage?.aiHint || product.variants[0].images[0].aiHint}
               />
+            </div>
+            <div className="grid grid-cols-5 gap-2">
+              {selectedVariant.images.map((image, index) => (
+                <button
+                  key={index}
+                  className={cn(
+                    "relative aspect-square w-full rounded-md border-2 overflow-hidden",
+                    image.src === activeImage?.src ? "border-primary" : "border-border"
+                  )}
+                  onClick={() => setActiveImage(image)}
+                >
+                  <Image src={image.src} alt={image.alt} fill className="object-cover" />
+                </button>
+              ))}
             </div>
           </div>
 
@@ -162,7 +162,7 @@ export default function ProductPage() {
             )}
 
 
-            <div className="flex gap-4 mt-4">
+            <div className="flex flex-col sm:flex-row gap-4 mt-4">
                  <Button size="lg" onClick={() => addToCart({ ...product, price: selectedVariant.price }, 'product')} className="flex-1">
                     <ShoppingCart className="mr-2" /> Add to Cart
                 </Button>

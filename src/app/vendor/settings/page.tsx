@@ -19,9 +19,9 @@ const vendorSettingsSchema = z.object({
     name: z.string().min(2, "Business name is required"),
     description: z.string().min(10, "Description must be at least 10 characters"),
     contactEmail: z.string().email(),
-    mobile: z.string().regex(/^\d{10}$/, "Please enter a valid 10-digit mobile number"),
-    gstin: z.string().min(15, "GSTIN must be 15 characters").max(15),
-    pan: z.string().min(10, "PAN must be 10 characters").max(10),
+    mobile: z.string().min(1, "Please enter a mobile number"),
+    gstin: z.string().min(1, "GSTIN is required"),
+    pan: z.string().min(1, "PAN is required"),
     bankDetails: z.string().min(10, "Please enter valid bank details"),
     pickupAddress: z.string().min(10, "Pickup address is required"),
 });

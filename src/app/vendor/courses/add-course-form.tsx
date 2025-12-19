@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -41,7 +42,7 @@ export function AddCourseForm({ onSubmit }: AddCourseFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 md:space-y-8">
         <FormField
           control={form.control}
           name="name"

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Suspense } from 'react';
@@ -66,23 +67,21 @@ function OrderSummaryContent() {
 
     return (
         <AuthenticatedRouteGuard>
-            <div className="container mx-auto px-4 py-12">
+            <div className="container mx-auto px-4 py-8 md:py-12">
                 <CheckoutStepper currentStep="summary" />
                 <div className="space-y-6 mt-8">
                      {selectedAddress && (
                         <Card>
-                            <CardHeader className="flex flex-row items-center justify-between">
-                                <div>
+                            <CardHeader className="flex flex-row items-start md:items-center justify-between gap-4">
+                                <div className="flex-1">
                                     <CardTitle>Deliver to:</CardTitle>
-                                    <CardDescription className="font-semibold text-foreground">{selectedAddress.fullName}</CardDescription>
+                                    <CardDescription className="font-semibold text-foreground mt-1">{selectedAddress.fullName}</CardDescription>
+                                     <p className="text-sm text-muted-foreground mt-2">
+                                        {selectedAddress.addressLine1}, {selectedAddress.addressLine2}, {selectedAddress.city}, {selectedAddress.state} - {selectedAddress.pincode}
+                                    </p>
                                 </div>
                                 <Button variant="outline" onClick={() => router.push('/checkout')}>Change</Button>
                             </CardHeader>
-                            <CardContent>
-                                <p className="text-sm text-muted-foreground">
-                                    {selectedAddress.addressLine1}, {selectedAddress.addressLine2}, {selectedAddress.city}, {selectedAddress.state} - {selectedAddress.pincode}
-                                </p>
-                            </CardContent>
                         </Card>
                      )}
                      

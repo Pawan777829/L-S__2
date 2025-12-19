@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
@@ -163,12 +164,12 @@ export function AddProductForm({ onSubmit }: AddProductFormProps) {
            <FormDescription>Detailed technical specs.</FormDescription>
           <div className="space-y-4 mt-2">
             {specFields.map((field, index) => (
-              <div key={field.id} className="flex items-start gap-2">
+              <div key={field.id} className="flex flex-col md:flex-row items-start gap-2">
                 <FormField
                   control={form.control}
                   name={`specifications.${index}.name`}
                   render={({ field }) => (
-                     <FormItem className="flex-1">
+                     <FormItem className="flex-1 w-full">
                         <FormControl><Input {...field} placeholder="Spec Name (e.g. Weight)" /></FormControl>
                          <FormMessage />
                     </FormItem>
@@ -178,13 +179,13 @@ export function AddProductForm({ onSubmit }: AddProductFormProps) {
                   control={form.control}
                   name={`specifications.${index}.value`}
                   render={({ field }) => (
-                     <FormItem className="flex-1">
+                     <FormItem className="flex-1 w-full">
                         <FormControl><Input {...field} placeholder="Spec Value (e.g. 15kg)" /></FormControl>
                          <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button type="button" variant="destructive" size="icon" onClick={() => removeSpec(index)} disabled={specFields.length <= 1}>
+                <Button type="button" variant="destructive" size="icon" onClick={() => removeSpec(index)} disabled={specFields.length <= 1} className="mt-2 md:mt-0">
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
@@ -196,7 +197,7 @@ export function AddProductForm({ onSubmit }: AddProductFormProps) {
         </div>
         
          {/* Services */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
              <FormField
                 control={form.control}
                 name="services.warranty"
@@ -245,7 +246,7 @@ export function AddProductForm({ onSubmit }: AddProductFormProps) {
                                 </FormItem>
                             )}
                         />
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                              <FormField
                                 control={form.control}
                                 name={`variants.${index}.mrp`}

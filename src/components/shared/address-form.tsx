@@ -47,7 +47,7 @@ export function AddressForm({ onSubmit, defaultValues }: AddressFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 md:space-y-6">
         <FormField
           control={form.control}
           name="fullName"
@@ -92,7 +92,7 @@ export function AddressForm({ onSubmit, defaultValues }: AddressFormProps) {
             </FormItem>
           )}
         />
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
             <FormField
             control={form.control}
             name="pincode"
@@ -116,7 +116,7 @@ export function AddressForm({ onSubmit, defaultValues }: AddressFormProps) {
             )}
             />
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
             <FormField
             control={form.control}
             name="state"
