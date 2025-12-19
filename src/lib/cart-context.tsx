@@ -51,6 +51,7 @@ type CartContextType = {
   cartCount: number;
   cartTotal: number;
   isLoading: boolean;
+  hasOnlyDigitalItems: boolean;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -262,6 +263,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const hasOnlyDigitalItems = combinedCart.length > 0 && combinedCart.every(item => item.type === 'course');
   const cartCount = combinedCart.reduce((count, item) => count + item.quantity, 0);
   const cartTotal = combinedCart.reduce((total, item) => total + item.item.price * item.quantity, 0);
 
@@ -274,6 +276,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     cartCount,
     cartTotal,
     isLoading: isUserLoading || (user && isCartLoading),
+    hasOnlyDigitalItems,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

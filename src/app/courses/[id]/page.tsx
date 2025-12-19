@@ -65,14 +65,24 @@ export default function CoursePage() {
   const course = getCourseById(id as string);
   const relatedCourses = getCourses().filter(c => c.id !== id).slice(0, 2);
 
-  const { addToCart } = useCart();
+  const { addToCart, cartItems } = useCart();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   const handleEnroll = () => {
     if (!user) {
       setShowLoginDialog(true);
-    } else if (course) {
+      return;
+    } 
+    if (course) {
+      // Check if any physical items are in the cart
+      const hasPhysicalItems = cartItems.some(item => item.type === 'product');
       addToCart(course, 'course');
+      // If only courses will be in the cart, go to payment, otherwise go to standard checkout
+      if (hasPhysicalItems) {
+        router.push('/checkout');
+      } else {
+        router.push('/checkout/payment?addressId=digital');
+      }
     }
   };
 
@@ -160,7 +170,7 @@ export default function CoursePage() {
                     <Button size="lg" onClick={handleEnroll} className="w-full">
                         Enroll Now
                     </Button>
-                     <Button size="lg" variant="outline" onClick={handleEnroll} className="w-full mt-2">
+                     <Button size="lg" variant="outline" onClick={() => course && addToCart(course, 'course')} className="w-full mt-2">
                         Add to Cart
                     </Button>
                     <p className="text-xs text-muted-foreground text-center mt-2">30-Day Money-Back Guarantee</p>

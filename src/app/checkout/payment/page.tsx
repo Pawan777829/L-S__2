@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import AuthenticatedRouteGuard from '@/components/auth/authenticated-route-guard';
 import { useCart } from '@/lib/cart-context';
 import { useUser, useFirestore } from '@/firebase';
-import { collection, addDoc, writeBatch } from 'firebase/firestore';
+import { collection, addDoc, writeBatch, doc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -48,7 +48,7 @@ function PaymentPageContent() {
             // 1. Create Order Document
             const orderData = {
                 userId: user.uid,
-                addressId: addressId,
+                addressId: addressId, // Can be 'digital' for digital-only orders
                 items: cartItems.map(item => ({ 
                     itemId: item.item.originalId,
                     variantId: item.item.variantId,
@@ -63,7 +63,7 @@ function PaymentPageContent() {
                 paymentMethod: selectedPaymentMethod,
             };
             const ordersCollectionRef = collection(firestore, 'users', user.uid, 'orders');
-            const orderRef = addDoc(ordersCollectionRef, {}); // Placeholder to get ID, then set
+            const orderRef = doc(ordersCollectionRef); // Create a new doc ref
             batch.set(orderRef, orderData);
 
             // 2. Create Enrollment Documents for courses
@@ -77,7 +77,7 @@ function PaymentPageContent() {
                     progress: 0,
                     enrolledDate: new Date().toISOString(),
                 };
-                const enrollmentRef = addDoc(enrollmentsCollectionRef, {}); // placeholder
+                const enrollmentRef = doc(enrollmentsCollectionRef); // create a new doc ref
                 batch.set(enrollmentRef, enrollmentData);
             }
 

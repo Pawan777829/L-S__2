@@ -3,6 +3,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCart, CartItem as CartItemType } from '@/lib/cart-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -112,7 +113,20 @@ function CartLoader() {
 }
 
 export default function CartPage() {
-  const { cartItems, cartTotal, cartCount, isLoading } = useCart();
+  const { cartItems, cartTotal, cartCount, isLoading, hasOnlyDigitalItems } = useCart();
+  const router = useRouter();
+
+  const handleCheckout = () => {
+    if (hasOnlyDigitalItems) {
+      // For digital-only carts, skip address and go to a simplified summary or payment
+      // We'll go directly to payment for simplicity, assuming no address is needed at all.
+      // A dummy address ID can be used if the payment page requires one, or the payment page can be adapted.
+      router.push('/checkout/payment?addressId=digital');
+    } else {
+      router.push('/checkout');
+    }
+  };
+
 
   if (isLoading) {
     return <CartLoader />;
@@ -168,8 +182,8 @@ export default function CartPage() {
                 <span>Total</span>
                 <span>₹{cartTotal.toFixed(2)}</span>
               </div>
-              <Button className="w-full" size="lg" asChild>
-                <Link href="/checkout">Proceed to Checkout</Link>
+              <Button className="w-full" size="lg" onClick={handleCheckout}>
+                Proceed to Checkout
               </Button>
             </CardContent>
           </Card>
