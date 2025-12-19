@@ -94,7 +94,16 @@ export default function VendorSettingsPage() {
 
     useEffect(() => {
         if (vendorProfile) {
-            form.reset(vendorProfile);
+            form.reset({
+                name: vendorProfile.name || '',
+                description: vendorProfile.description || '',
+                contactEmail: vendorProfile.contactEmail || '',
+                mobile: vendorProfile.mobile || '',
+                gstin: vendorProfile.gstin || '',
+                pan: vendorProfile.pan || '',
+                bankDetails: vendorProfile.bankDetails || '',
+                pickupAddress: vendorProfile.pickupAddress || '',
+            });
         }
     }, [vendorProfile, form]);
 

@@ -70,6 +70,7 @@ export default function AccountPage() {
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
+    // Ensure all fields have a default value to avoid uncontrolled -> controlled error
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -80,20 +81,24 @@ export default function AccountPage() {
   });
 
   useEffect(() => {
+    // Reset the form with new values when userProfile or user loads
     if (userProfile) {
       form.reset({
-        firstName: userProfile.firstName,
-        lastName: userProfile.lastName,
-        email: userProfile.email,
+        firstName: userProfile.firstName || '',
+        lastName: userProfile.lastName || '',
+        email: userProfile.email || '',
         mobile: userProfile.mobile || '',
         gender: userProfile.gender,
       });
     } else if (user) {
+        // Fallback to auth user data if firestore profile doesn't exist
         form.reset({
             firstName: user.displayName?.split(' ')[0] || '',
             lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
             email: user.email || '',
-        })
+            mobile: '',
+            gender: undefined,
+        });
     }
   }, [userProfile, user, form]);
 
@@ -101,13 +106,18 @@ export default function AccountPage() {
     if (!user || !userDocRef) return;
 
     try {
-      await setDoc(userDocRef, {
+      // Create a payload that doesn't include undefined values
+      const payload: Partial<UserProfile> = {
         firstName: values.firstName,
         lastName: values.lastName,
         email: values.email,
-        mobile: values.mobile,
-        gender: values.gender,
-      }, { merge: true });
+        mobile: values.mobile || '',
+      };
+      if (values.gender) {
+          payload.gender = values.gender;
+      }
+
+      await setDoc(userDocRef, payload, { merge: true });
 
       const newDisplayName = `${values.firstName} ${values.lastName}`.trim();
       if (user.displayName !== newDisplayName) {
@@ -207,7 +217,7 @@ export default function AccountPage() {
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          value={field.value}
                           className="flex space-x-4"
                         >
                           <FormItem className="flex items-center space-x-2 space-y-0">
