@@ -51,7 +51,7 @@ function PaymentPageContent() {
                 addressId: addressId, // Can be 'digital' for digital-only orders
                 items: cartItems.map(item => ({ 
                     itemId: item.item.originalId,
-                    variantId: item.item.variantId,
+                    variantId: item.item.variantId || null,
                     name: item.item.name,
                     price: item.item.price,
                     quantity: item.quantity,
