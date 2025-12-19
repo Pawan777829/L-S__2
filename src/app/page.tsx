@@ -32,7 +32,7 @@ export default function Home() {
   const renderHeroButtons = () => {
     if (isLoading) {
       return (
-        <div className="flex justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-4">
           <Skeleton className="h-12 w-40" />
           <Skeleton className="h-12 w-40" />
         </div>
@@ -41,19 +41,22 @@ export default function Home() {
     
     if (isVendor) {
       return (
-         <div className="flex justify-center gap-4">
+         <div className="flex flex-wrap justify-center gap-4">
           <Button asChild size="lg">
             <Link href="/vendor/dashboard">Manage Your Store</Link>
           </Button>
           <Button asChild size="lg" variant="secondary">
             <Link href="/vendor/products/new">Add New Product</Link>
           </Button>
+           <Button asChild size="lg" variant="secondary">
+            <Link href="/vendor/courses/new">Add New Course</Link>
+          </Button>
         </div>
       )
     }
 
     return (
-      <div className="flex justify-center gap-4">
+      <div className="flex flex-wrap justify-center gap-4">
         <Button asChild size="lg">
           <Link href="/products">Explore Products</Link>
         </Button>

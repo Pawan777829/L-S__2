@@ -2,9 +2,6 @@
 
 import AuthenticatedRouteGuard from '@/components/auth/authenticated-route-guard';
 import { VendorSidebar } from './components/vendor-sidebar';
-import { Header } from '@/components/layout/header';
-import { Toaster } from '@/components/ui/toaster';
-
 
 export default function VendorLayout({
   children,

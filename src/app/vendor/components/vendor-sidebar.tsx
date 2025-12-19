@@ -11,9 +11,7 @@ import {
 import {
   Home,
   Package,
-  Package2,
   ShoppingCart,
-  Users2,
   LineChart,
   Settings,
   PanelLeft,
@@ -24,6 +22,7 @@ import {
   Archive,
   Megaphone,
   LifeBuoy,
+  GraduationCap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -37,6 +36,7 @@ import { Logo } from '@/components/layout/logo';
 const navItems = [
     { href: '/vendor/dashboard', label: 'Dashboard', icon: Home },
     { href: '/vendor/products', label: 'Products', icon: Package },
+    { href: '/vendor/courses', label: 'Courses', icon: GraduationCap },
     { href: '/vendor/orders', label: 'Orders', icon: ShoppingCart },
     { href: '/vendor/inventory', label: 'Inventory', icon: Archive },
     { href: '/vendor/payments', label: 'Payments', icon: CircleDollarSign },
@@ -48,7 +48,7 @@ const navItems = [
 ];
 
 const NavLink = ({ item, pathname }: { item: typeof navItems[0]; pathname: string }) => {
-    const isActive = pathname === item.href;
+    const isActive = pathname.startsWith(item.href);
     const Icon = item.icon;
     return (
         <Tooltip>
@@ -70,7 +70,7 @@ const NavLink = ({ item, pathname }: { item: typeof navItems[0]; pathname: strin
 }
 
 const MobileNavLink = ({ item, pathname }: { item: typeof navItems[0]; pathname: string }) => {
-    const isActive = pathname === item.href;
+    const isActive = pathname.startsWith(item.href);
     const Icon = item.icon;
     return (
          <Link
