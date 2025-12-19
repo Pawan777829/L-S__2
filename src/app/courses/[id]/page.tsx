@@ -8,11 +8,11 @@ import { Button } from '@/components/ui/button';
 import { useCart } from '@/lib/cart-context';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { ShoppingCart, Star, Clock, BookOpen, User, CheckCircle, PlaySquare } from 'lucide-react';
+import { ShoppingCart, Star, Clock, BookOpen, User, CheckCircle, PlaySquare, GraduationCap } from 'lucide-react';
 import CourseCard from '@/components/shared/course-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { useState, useEffect } from 'react';
 import {
     AlertDialog,
@@ -24,7 +24,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { doc } from 'firebase/firestore';
+import { collection, query, where } from 'firebase/firestore';
 
 const curriculum = [
     { title: "Introduction", details: "1 video (12 min)" },
@@ -34,6 +34,10 @@ const curriculum = [
     { title: "Deployment", details: "2 videos (20 min)" },
 ]
 
+interface Enrollment {
+  id: string;
+  courseId: string;
+}
 
 function CoursePageLoader() {
   return (
@@ -62,25 +66,43 @@ export default function CoursePage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useUser();
+  const firestore = useFirestore();
   const { id } = params;
   const course = getCourseById(id as string);
   const relatedCourses = getCourses().filter(c => c.id !== id).slice(0, 2);
 
   const { addToCart, cartItems } = useCart();
   const [showLoginDialog, setShowLoginDialog] = useState(false);
+  
+  const enrollmentQuery = useMemoFirebase(() => {
+    if (!user || !id) return null;
+    return query(
+      collection(firestore, 'users', user.uid, 'enrollments'),
+      where('courseId', '==', id as string)
+    );
+  }, [firestore, user, id]);
+
+  const { data: enrollments, isLoading: isEnrollmentLoading } = useCollection<Enrollment>(enrollmentQuery);
+
+  const isEnrolled = !isEnrollmentLoading && (enrollments?.length ?? 0) > 0;
 
   const handleEnroll = () => {
     if (!user) {
       setShowLoginDialog(true);
       return;
-    } 
+    }
+    if (isEnrolled) {
+      router.push(`/account/courses/${id}`);
+      return;
+    }
     if (course) {
       addToCart(course, 'course');
-      const hasOnlyCourses = cartItems.every(item => item.type === 'course') && cartItems.length > 0;
-      if (hasOnlyCourses) {
-        router.push(`/checkout/payment?addressId=digital`);
+      // This logic checks if ONLY courses are in the cart to skip address step
+      const isDigitalOnlyCart = cartItems.every(item => item.type === 'course');
+      if (isDigitalOnlyCart) {
+         router.push(`/checkout/payment?addressId=digital`);
       } else {
-        router.push('/cart');
+         router.push('/cart');
       }
     }
   };
@@ -161,16 +183,32 @@ export default function CoursePage() {
           <div className="sticky top-24">
             <Card className="shadow-2xl">
                 <CardHeader>
-                    <p className="text-4xl font-bold font-headline">₹{course.price.toFixed(2)}</p>
+                    {isEnrolled ? (
+                         <div className="flex items-center gap-2">
+                             <CheckCircle className="h-8 w-8 text-green-500" />
+                             <p className="text-xl font-bold text-green-500">You are enrolled!</p>
+                         </div>
+                    ) : (
+                         <p className="text-4xl font-bold font-headline">₹{course.price.toFixed(2)}</p>
+                    )}
                 </CardHeader>
                 <CardContent>
-                    <Button size="lg" onClick={handleEnroll} className="w-full">
-                        Enroll Now
-                    </Button>
-                    <Button size="lg" variant="outline" onClick={() => course && addToCart(course, 'course')} className="w-full mt-2">
-                        Add to Cart
-                    </Button>
-                    <p className="text-xs text-muted-foreground text-center mt-2">30-Day Money-Back Guarantee</p>
+                    {isEnrolled ? (
+                         <Button size="lg" onClick={() => router.push(`/account/courses/${id}`)} className="w-full">
+                            <GraduationCap className="mr-2 h-5 w-5"/> Go to Course
+                        </Button>
+                    ) : (
+                        <>
+                            <Button size="lg" onClick={handleEnroll} className="w-full" disabled={isEnrollmentLoading}>
+                                {isEnrollmentLoading ? 'Loading...' : 'Enroll Now'}
+                            </Button>
+                            <Button size="lg" variant="outline" onClick={() => course && addToCart(course, 'course')} className="w-full mt-2" disabled={isEnrollmentLoading}>
+                                Add to Cart
+                            </Button>
+                            <p className="text-xs text-muted-foreground text-center mt-2">30-Day Money-Back Guarantee</p>
+                        </>
+                    )}
+
                     <Separator className="my-4" />
                     <h3 className="font-semibold mb-2">This course includes:</h3>
                     <ul className="space-y-2 text-sm text-muted-foreground">
@@ -215,3 +253,5 @@ export default function CoursePage() {
     </div>
   );
 }
+
+    
