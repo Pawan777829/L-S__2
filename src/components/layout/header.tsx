@@ -16,18 +16,27 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useUser, useAuth } from '@/firebase';
+import { useUser, useAuth, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { User as UserIcon, LogOut, LayoutDashboard, ShoppingCart, GraduationCap, User as ProfileIcon, LogIn, UserPlus } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { doc } from 'firebase/firestore';
 
 
 function UserNav() {
-  const { user, isUserLoading } = useUser();
+  const { user: authUser, isUserLoading } = useUser();
+  const firestore = useFirestore();
   const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!authUser) return null;
+    return doc(firestore, 'users', authUser.uid);
+  }, [authUser, firestore]);
+
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
 
   const handleSignOut = async () => {
     try {
@@ -46,11 +55,11 @@ function UserNav() {
     }
   };
   
-  if (isUserLoading) {
+  if (isUserLoading || isProfileLoading) {
     return null;
   }
 
-  if (!user) {
+  if (!authUser) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -78,14 +87,15 @@ function UserNav() {
     );
   }
 
-  const userInitial = user.displayName?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || '?';
+  const userInitial = authUser.displayName?.charAt(0).toUpperCase() || authUser.email?.charAt(0).toUpperCase() || '?';
+  const isVendor = userProfile?.role === 'vendor';
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={user.photoURL || undefined} alt={user.displayName || 'User'} />
+            <AvatarImage src={authUser.photoURL || undefined} alt={authUser.displayName || 'User'} />
             <AvatarFallback>{userInitial}</AvatarFallback>
           </Avatar>
         </Button>
@@ -93,9 +103,9 @@ function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.displayName}</p>
+            <p className="text-sm font-medium leading-none">{authUser.displayName}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              {user.email}
+              {authUser.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -112,10 +122,12 @@ function UserNav() {
            <GraduationCap className="mr-2 h-4 w-4" />
           <span>My Courses</span>
         </DropdownMenuItem>
-         <DropdownMenuItem onClick={() => router.push('/vendor/dashboard')}>
-          <LayoutDashboard className="mr-2 h-4 w-4" />
-          <span>Vendor Dashboard</span>
-        </DropdownMenuItem>
+         {isVendor && (
+            <DropdownMenuItem onClick={() => router.push('/vendor/dashboard')}>
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                <span>Vendor Dashboard</span>
+            </DropdownMenuItem>
+         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut}>
            <LogOut className="mr-2 h-4 w-4" />

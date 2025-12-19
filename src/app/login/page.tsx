@@ -11,11 +11,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Logo } from '@/components/layout/logo';
-import { useAuth, useUser, useFirestore } from '@/firebase';
+import { useAuth, useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect } from 'react';
+import { useDoc } from '@/firebase/firestore/use-doc';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
@@ -27,7 +28,14 @@ export default function LoginPage() {
   const auth = useAuth();
   const firestore = useFirestore();
   const { toast } = useToast();
-  const { user, isUserLoading } = useUser();
+  const { user: authUser, isUserLoading } = useUser();
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!authUser) return null;
+    return doc(firestore, 'users', authUser.uid);
+  }, [authUser, firestore]);
+
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -38,12 +46,12 @@ export default function LoginPage() {
   });
 
   useEffect(() => {
-    // This effect is now less critical for redirection, but good for already-logged-in users.
-    if (!isUserLoading && user) {
-      // Don't auto-redirect here as we want the onSubmit to handle it based on role.
-      // A user might be logged in but want to switch accounts.
+    // Redirect if user is already logged in and we have their profile data
+    if (!isUserLoading && !isProfileLoading && authUser && userProfile) {
+      const redirectTo = userProfile.role === 'vendor' ? '/vendor/dashboard' : '/account';
+      router.push(redirectTo);
     }
-  }, [user, isUserLoading, router]);
+  }, [authUser, userProfile, isUserLoading, isProfileLoading, router]);
 
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -80,10 +88,21 @@ export default function LoginPage() {
     }
   };
   
-  if (isUserLoading) { // simplified loading state
+  if (isUserLoading || isProfileLoading) { // simplified loading state
     return (
       <div className="container flex h-screen w-screen flex-col items-center justify-center">
         <p>Loading...</p>
+      </div>
+    );
+  }
+
+  // If user is already logged in but profile is still loading, show loading.
+  // Otherwise if user is logged in, they will be redirected by the useEffect.
+  // If no user, show the login form.
+  if (authUser) {
+     return (
+      <div className="container flex h-screen w-screen flex-col items-center justify-center">
+        <p>Redirecting...</p>
       </div>
     );
   }

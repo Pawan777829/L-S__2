@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Logo } from '@/components/layout/logo';
-import { useAuth, useUser, useFirestore } from '@/firebase';
+import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState, Suspense } from 'react';
@@ -49,9 +49,16 @@ function SignupFormComponent() {
   const auth = useAuth();
   const firestore = useFirestore();
   const { toast } = useToast();
-  const { user, isUserLoading } = useUser();
+  const { user: authUser, isUserLoading } = useUser();
   
   const roleFromUrl = searchParams.get('role') === 'vendor' ? 'vendor' : 'learner';
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!authUser) return null;
+    return doc(firestore, 'users', authUser.uid);
+  }, [authUser, firestore]);
+
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
@@ -71,10 +78,11 @@ function SignupFormComponent() {
   });
 
   useEffect(() => {
-    if (!isUserLoading && user) {
-      router.push('/account');
+    if (!isUserLoading && !isProfileLoading && authUser && userProfile) {
+      const redirectTo = userProfile.role === 'vendor' ? '/vendor/dashboard' : '/account';
+      router.push(redirectTo);
     }
-  }, [user, isUserLoading, router]);
+  }, [authUser, userProfile, isUserLoading, isProfileLoading, router]);
 
   const onSubmit = async (values: FormSchemaType) => {
     if (!auth || !firestore) return;
@@ -133,8 +141,11 @@ function SignupFormComponent() {
         description: "You've been successfully signed up!",
       });
 
+      // After commit, the redirect useEffect will handle navigation
+      // But we can give it a nudge if needed, though it might be redundant.
       const redirectTo = values.role === 'vendor' ? '/vendor/dashboard' : '/account';
       router.push(redirectTo);
+
 
     } catch (error: any) {
       toast({
@@ -145,7 +156,7 @@ function SignupFormComponent() {
     }
   };
 
-  if (isUserLoading || user) {
+  if (isUserLoading || authUser) {
     return (
       <div className="container flex h-screen w-screen flex-col items-center justify-center">
         <p>Loading...</p>
