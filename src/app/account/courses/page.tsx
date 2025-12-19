@@ -11,6 +11,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { getCourseById, Course } from '@/lib/placeholder-data';
 import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import Image from 'next/image';
 
 
 interface Enrollment {
@@ -25,18 +26,17 @@ interface EnrolledCourse extends Course {
 
 function EnrolledCoursesLoader() {
   return (
-    <div className="space-y-6">
-      {[...Array(2)].map((_, i) => (
-        <div key={i} className="p-4 border rounded-lg">
-          <div className="flex justify-between items-start">
-            <div>
-              <Skeleton className="h-6 w-48 mb-2" />
-              <Skeleton className="h-4 w-32" />
-            </div>
-            <Skeleton className="h-10 w-10 rounded-full" />
-          </div>
-          <Skeleton className="h-2 w-full mt-3" />
-        </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[...Array(3)].map((_, i) => (
+        <Card key={i}>
+            <Skeleton className="h-40 w-full rounded-t-lg" />
+            <CardContent className="p-4 space-y-2">
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-2 w-full mt-2" />
+                <Skeleton className="h-10 w-full mt-4" />
+            </CardContent>
+        </Card>
       ))}
     </div>
   );
@@ -79,38 +79,49 @@ export default function EnrolledCoursesPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8 font-headline">My Courses</h1>
+      <h1 className="text-3xl font-bold mb-8 font-headline">My Learning Dashboard</h1>
        <Card>
         <CardHeader>
-          <CardTitle>Enrolled Courses</CardTitle>
-          <CardDescription>Continue your learning journey.</CardDescription>
+          <CardTitle>My Courses</CardTitle>
+          <CardDescription>Continue your learning journey and build new skills.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent>
           {pageIsLoading ? (
             <EnrolledCoursesLoader />
           ) : enrolledCourses.length > 0 ? (
-            enrolledCourses.map((course) => (
-              <div key={course.id} className="p-4 border rounded-lg">
-                  <div className="flex justify-between items-start">
-                      <div>
-                          <h3 className="font-semibold">{course.name}</h3>
-                          <p className="text-sm text-muted-foreground mt-1">{course.progress}% complete</p>
-                      </div>
-                      <Button variant="ghost" size="icon" asChild>
-                          <Link href={`/courses/${course.id}`}>
-                              <PlayCircle />
-                              <span className="sr-only">Continue Course</span>
-                          </Link>
-                      </Button>
-                  </div>
-                  <Progress value={course.progress} className="mt-2 h-2" />
-              </div>
-            ))
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {enrolledCourses.map((course) => (
+                    <Card key={course.id} className="flex flex-col">
+                        <div className="relative aspect-video w-full">
+                            <Image src={course.image.src} alt={course.image.alt} fill className="rounded-t-lg object-cover" />
+                        </div>
+                        <CardContent className="p-4 flex-grow flex flex-col">
+                            <h3 className="font-semibold text-lg flex-grow">{course.name}</h3>
+                            <p className="text-sm text-muted-foreground mt-1">by {course.instructor}</p>
+                            <div className="mt-4">
+                                <div className="flex justify-between items-center text-xs text-muted-foreground mb-1">
+                                    <span>Progress</span>
+                                    <span>{course.progress}%</span>
+                                </div>
+                                <Progress value={course.progress} className="h-2" />
+                            </div>
+                        </CardContent>
+                        <div className="p-4 pt-0">
+                             <Button asChild className="w-full">
+                                <Link href={`/courses/${course.id}`}>
+                                    {course.progress > 0 ? 'Continue Learning' : 'Start Learning'} <PlayCircle className="ml-2 h-4 w-4" />
+                                </Link>
+                            </Button>
+                        </div>
+                    </Card>
+                ))}
+            </div>
           ) : (
-            <div className="text-center py-12">
+            <div className="text-center py-16 border-2 border-dashed rounded-lg">
               <GraduationCap className="mx-auto h-16 w-16 text-muted-foreground" />
               <p className="mt-4 text-muted-foreground">You are not enrolled in any courses yet.</p>
-              <Button asChild variant="link" className="mt-2">
+              <p className="text-sm text-muted-foreground">Once you purchase a course, it will appear here.</p>
+              <Button asChild variant="default" className="mt-6">
                 <Link href="/courses">Browse Courses</Link>
               </Button>
             </div>

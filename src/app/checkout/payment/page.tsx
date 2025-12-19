@@ -23,7 +23,7 @@ function PaymentPageContent() {
     const firestore = useFirestore();
     const router = useRouter();
     const searchParams = useSearchParams();
-    const { cartItems, cartTotal, cartCount, clearCart, isLoading: isCartLoading } = useCart();
+    const { cartItems, cartTotal, cartCount, clearCart, hasOnlyDigitalItems } = useCart();
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
     const [isPlacingOrder, setIsPlacingOrder] = useState(false);
     const { toast } = useToast();
@@ -91,7 +91,7 @@ function PaymentPageContent() {
                 description: "Thank you for your purchase. You can now access your new courses.",
             });
 
-            router.push('/account/orders');
+            router.push('/account/courses');
 
         } catch (error: any) {
             toast({
@@ -150,14 +150,16 @@ function PaymentPageContent() {
                                         <p className="text-sm text-muted-foreground">This feature is coming soon.</p>
                                     </AccordionContent>
                                 </AccordionItem>
-                                 <AccordionItem value="cod">
-                                    <AccordionTrigger className="font-semibold"><Truck className="mr-2" /> Cash on Delivery</AccordionTrigger>
-                                    <AccordionContent className="pt-4">
-                                         <Button className="w-full" onClick={handlePlaceOrder} disabled={isPlacingOrder}>
-                                             {isPlacingOrder ? <Loader2 className="animate-spin" /> : `Place Order (COD)`}
-                                        </Button>
-                                    </AccordionContent>
-                                </AccordionItem>
+                                 {!hasOnlyDigitalItems && (
+                                    <AccordionItem value="cod">
+                                        <AccordionTrigger className="font-semibold"><Truck className="mr-2" /> Cash on Delivery</AccordionTrigger>
+                                        <AccordionContent className="pt-4">
+                                            <Button className="w-full" onClick={handlePlaceOrder} disabled={isPlacingOrder}>
+                                                {isPlacingOrder ? <Loader2 className="animate-spin" /> : `Place Order (COD)`}
+                                            </Button>
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                 )}
                             </Accordion>
                         </CardContent>
                      </Card>
