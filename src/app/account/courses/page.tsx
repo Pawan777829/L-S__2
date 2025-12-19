@@ -7,11 +7,12 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { PlayCircle, GraduationCap } from 'lucide-react';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc } from 'firebase/firestore';
 import { getCourseById, Course } from '@/lib/placeholder-data';
 import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import Image from 'next/image';
+import { useDoc } from '@/firebase/firestore/use-doc';
 
 
 interface Enrollment {
@@ -54,7 +55,13 @@ export default function EnrolledCoursesPage() {
     return collection(firestore, 'users', user.uid, 'enrollments');
   }, [user, firestore]);
 
+  const userDocRef = useMemoFirebase(() => {
+    if (!user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [user, firestore]);
+
   const { data: enrollments, isLoading: enrollmentsLoading } = useCollection<Enrollment>(enrollmentsCollectionRef);
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
 
   useEffect(() => {
     if (!enrollmentsLoading && enrollments) {
@@ -77,7 +84,8 @@ export default function EnrolledCoursesPage() {
     }
   }, [enrollments, enrollmentsLoading]);
 
-  const pageIsLoading = isUserLoading || isLoading;
+  const pageIsLoading = isUserLoading || isLoading || isProfileLoading;
+  const isVendor = userProfile?.role === 'vendor';
 
   return (
     <div>
@@ -123,9 +131,16 @@ export default function EnrolledCoursesPage() {
               <GraduationCap className="mx-auto h-16 w-16 text-muted-foreground" />
               <p className="mt-4 text-muted-foreground">You are not enrolled in any courses yet.</p>
               <p className="text-sm text-muted-foreground">Once you purchase a course, it will appear here.</p>
-              <Button asChild variant="default" className="mt-6">
-                <Link href="/courses">Browse Courses</Link>
-              </Button>
+              <div className="mt-6 flex justify-center gap-4">
+                <Button asChild variant="default">
+                  <Link href="/courses">Browse Courses</Link>
+                </Button>
+                {isVendor && (
+                  <Button asChild variant="outline">
+                    <Link href="/vendor/courses/new">Add Course for Selling</Link>
+                  </Button>
+                )}
+              </div>
             </div>
           )}
         </CardContent>
