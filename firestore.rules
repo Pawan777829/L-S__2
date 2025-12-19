@@ -89,7 +89,8 @@ service cloud.firestore {
 
     match /users/{userId}/enrollments/{enrollmentId} {
       allow read: if isSignedIn() && isOwner(userId);
-      allow create, update, delete: if false; // Enrollments managed by backend/functions
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
+      allow update, delete: if false; 
     }
   }
 }

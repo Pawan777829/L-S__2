@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Suspense } from 'react';
@@ -7,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import AuthenticatedRouteGuard from '@/components/auth/authenticated-route-guard';
 import { useCart } from '@/lib/cart-context';
 import { useUser, useFirestore } from '@/firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, writeBatch } from 'firebase/firestore';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -30,7 +31,7 @@ function PaymentPageContent() {
     const addressId = searchParams.get('addressId');
 
     const handlePlaceOrder = async () => {
-        if (!user || !addressId || cartCount === 0 || !selectedPaymentMethod) {
+        if (!user || !addressId || cartCount === 0 || !selectedPaymentMethod || !firestore) {
              toast({
                 variant: 'destructive',
                 title: "Error",
@@ -41,32 +42,53 @@ function PaymentPageContent() {
         
         setIsPlacingOrder(true);
 
-        const orderData = {
-            userId: user.uid,
-            addressId: addressId,
-            items: cartItems.map(item => ({ 
-                itemId: item.item.originalId,
-                variantId: item.item.variantId,
-                name: item.item.name,
-                price: item.item.price,
-                quantity: item.quantity,
-                type: item.type,
-             })),
-            total: cartTotal,
-            status: 'Processing',
-            date: new Date().toISOString(),
-            paymentMethod: selectedPaymentMethod,
-        };
-
         try {
+            const batch = writeBatch(firestore);
+
+            // 1. Create Order Document
+            const orderData = {
+                userId: user.uid,
+                addressId: addressId,
+                items: cartItems.map(item => ({ 
+                    itemId: item.item.originalId,
+                    variantId: item.item.variantId,
+                    name: item.item.name,
+                    price: item.item.price,
+                    quantity: item.quantity,
+                    type: item.type,
+                })),
+                total: cartTotal,
+                status: 'Processing',
+                date: new Date().toISOString(),
+                paymentMethod: selectedPaymentMethod,
+            };
             const ordersCollectionRef = collection(firestore, 'users', user.uid, 'orders');
-            await addDoc(ordersCollectionRef, orderData);
+            const orderRef = addDoc(ordersCollectionRef, {}); // Placeholder to get ID, then set
+            batch.set(orderRef, orderData);
+
+            // 2. Create Enrollment Documents for courses
+            const enrollmentsCollectionRef = collection(firestore, 'users', user.uid, 'enrollments');
+            const courseItems = cartItems.filter(item => item.type === 'course');
+            
+            for (const courseItem of courseItems) {
+                const enrollmentData = {
+                    userId: user.uid,
+                    courseId: courseItem.item.originalId,
+                    progress: 0,
+                    enrolledDate: new Date().toISOString(),
+                };
+                const enrollmentRef = addDoc(enrollmentsCollectionRef, {}); // placeholder
+                batch.set(enrollmentRef, enrollmentData);
+            }
+
+            // 3. Commit batch
+            await batch.commit();
             
             await clearCart();
 
             toast({
                 title: "Order Placed!",
-                description: "Thank you for your purchase.",
+                description: "Thank you for your purchase. You can now access your new courses.",
             });
 
             router.push('/account/orders');
