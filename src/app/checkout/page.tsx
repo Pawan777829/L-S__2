@@ -17,6 +17,7 @@ import { AddressForm, AddressSchema, addressSchema } from '@/components/shared/a
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export interface Address {
     id: string;
@@ -134,11 +135,15 @@ function CheckoutPage() {
                                             <PlusCircle className="mr-2 h-4 w-4" /> Add New Address
                                         </Button>
                                     </DialogTrigger>
-                                    <DialogContent className="sm:max-w-[425px]">
+                                    <DialogContent className="sm:max-w-[425px] flex flex-col">
                                         <DialogHeader>
                                             <DialogTitle>Add a new address</DialogTitle>
                                         </DialogHeader>
-                                        <AddressForm onSubmit={handleAddAddress} />
+                                         <div className="flex-grow overflow-hidden">
+                                            <ScrollArea className="h-full pr-6 -mr-6">
+                                                <AddressForm onSubmit={handleAddAddress} />
+                                            </ScrollArea>
+                                        </div>
                                     </DialogContent>
                                 </Dialog>
 
@@ -200,5 +205,3 @@ function CheckoutPage() {
 }
 
 export default CheckoutPage;
-
-    

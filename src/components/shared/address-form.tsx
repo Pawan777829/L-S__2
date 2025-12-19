@@ -19,7 +19,7 @@ export const addressSchema = z.object({
   city: z.string().min(2, "City is required"),
   state: z.string().min(2, "State is required"),
   country: z.string().min(2, "Country is required").default("India"),
-  alternateMobile: z.string().optional(),
+  alternateMobile: z.string().optional().or(z.literal('')),
 });
 
 export type AddressSchema = z.infer<typeof addressSchema>;
@@ -172,5 +172,3 @@ export function AddressForm({ onSubmit, defaultValues }: AddressFormProps) {
     </Form>
   );
 }
-
-    
