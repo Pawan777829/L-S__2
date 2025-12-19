@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Home, PlusCircle } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { AddressForm, AddressSchema, addressSchema } from '@/components/shared/address-form';
+import { AddressForm, AddressSchema } from '@/components/shared/address-form';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -135,15 +135,15 @@ function CheckoutPage() {
                                             <PlusCircle className="mr-2 h-4 w-4" /> Add New Address
                                         </Button>
                                     </DialogTrigger>
-                                    <DialogContent className="sm:max-w-[425px] flex flex-col">
+                                    <DialogContent className="sm:max-w-md">
                                         <DialogHeader>
                                             <DialogTitle>Add a new address</DialogTitle>
                                         </DialogHeader>
-                                         <div className="flex-grow overflow-hidden">
-                                            <ScrollArea className="h-full pr-6 -mr-6">
+                                        <ScrollArea className="max-h-[70vh] p-1 pr-4">
+                                            <div className="pr-2">
                                                 <AddressForm onSubmit={handleAddAddress} />
-                                            </ScrollArea>
-                                        </div>
+                                            </div>
+                                        </ScrollArea>
                                     </DialogContent>
                                 </Dialog>
 

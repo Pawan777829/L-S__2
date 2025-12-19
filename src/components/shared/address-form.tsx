@@ -7,7 +7,6 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { DialogFooter } from '@/components/ui/dialog';
 
 export const addressSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
@@ -163,11 +162,11 @@ export function AddressForm({ onSubmit, defaultValues }: AddressFormProps) {
                 </FormItem>
             )}
         />
-        <DialogFooter>
+        <div className="pt-6">
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? 'Saving...' : 'Save Address'}
             </Button>
-        </DialogFooter>
+        </div>
       </form>
     </Form>
   );
