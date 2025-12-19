@@ -11,13 +11,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Logo } from '@/components/layout/logo';
-import { useAuth, useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { useAuth, useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect, useState, Suspense } from 'react';
 import { doc, setDoc, writeBatch } from 'firebase/firestore';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
+import { useDoc } from '@/firebase/firestore/use-doc';
 
 const learnerSchema = z.object({
   role: z.literal('learner'),
@@ -50,6 +51,7 @@ function SignupFormComponent() {
   const firestore = useFirestore();
   const { toast } = useToast();
   const { user: authUser, isUserLoading } = useUser();
+  const [isRedirecting, setIsRedirecting] = useState(false);
   
   const roleFromUrl = searchParams.get('role') === 'vendor' ? 'vendor' : 'learner';
 
@@ -78,11 +80,12 @@ function SignupFormComponent() {
   });
 
   useEffect(() => {
-    if (!isUserLoading && !isProfileLoading && authUser && userProfile) {
+    if (!isUserLoading && !isProfileLoading && authUser && userProfile && !isRedirecting) {
+      setIsRedirecting(true);
       const redirectTo = userProfile.role === 'vendor' ? '/vendor/dashboard' : '/account';
       router.push(redirectTo);
     }
-  }, [authUser, userProfile, isUserLoading, isProfileLoading, router]);
+  }, [authUser, userProfile, isUserLoading, isProfileLoading, router, isRedirecting]);
 
   const onSubmit = async (values: FormSchemaType) => {
     if (!auth || !firestore) return;
@@ -138,14 +141,10 @@ function SignupFormComponent() {
 
       toast({
         title: 'Account Created',
-        description: "You've been successfully signed up!",
+        description: "You've been successfully signed up! Redirecting...",
       });
 
-      // After commit, the redirect useEffect will handle navigation
-      // But we can give it a nudge if needed, though it might be redundant.
-      const redirectTo = values.role === 'vendor' ? '/vendor/dashboard' : '/account';
-      router.push(redirectTo);
-
+      // The useEffect will now handle redirection once the profile is loaded.
 
     } catch (error: any) {
       toast({
@@ -156,10 +155,21 @@ function SignupFormComponent() {
     }
   };
 
-  if (isUserLoading || authUser) {
+  const isLoading = isUserLoading || (authUser && isProfileLoading);
+  
+  if (isLoading) {
     return (
       <div className="container flex h-screen w-screen flex-col items-center justify-center">
         <p>Loading...</p>
+      </div>
+    );
+  }
+
+  // If user becomes authenticated, show a loading state while we wait for profile and redirect
+  if (authUser) {
+    return (
+      <div className="container flex h-screen w-screen flex-col items-center justify-center">
+        <p>Finalizing setup and redirecting...</p>
       </div>
     );
   }

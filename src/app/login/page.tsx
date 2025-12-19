@@ -15,7 +15,7 @@ import { useAuth, useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDoc } from '@/firebase/firestore/use-doc';
 
 const formSchema = z.object({
@@ -29,6 +29,7 @@ export default function LoginPage() {
   const firestore = useFirestore();
   const { toast } = useToast();
   const { user: authUser, isUserLoading } = useUser();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const userDocRef = useMemoFirebase(() => {
     if (!authUser) return null;
@@ -46,38 +47,24 @@ export default function LoginPage() {
   });
 
   useEffect(() => {
-    // Redirect if user is already logged in and we have their profile data
-    if (!isUserLoading && !isProfileLoading && authUser && userProfile) {
+    // Only perform redirection if the user is authenticated and we have their profile data
+    if (!isUserLoading && !isProfileLoading && authUser && userProfile && !isRedirecting) {
+      setIsRedirecting(true); // Prevent multiple redirects
       const redirectTo = userProfile.role === 'vendor' ? '/vendor/dashboard' : '/account';
       router.push(redirectTo);
     }
-  }, [authUser, userProfile, isUserLoading, isProfileLoading, router]);
+  }, [authUser, userProfile, isUserLoading, isProfileLoading, router, isRedirecting]);
 
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!auth || !firestore) return;
     try {
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
-      const loggedInUser = userCredential.user;
-
-      // Fetch user document from Firestore to check their role
-      const userDocRef = doc(firestore, 'users', loggedInUser.uid);
-      const userDoc = await getDoc(userDocRef);
-
-      let redirectTo = '/account'; // Default redirect path
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        if (userData.role === 'vendor') {
-          redirectTo = '/vendor/dashboard';
-        }
-      }
-
+      // The useEffect above will handle the redirection once the user and profile are loaded.
       toast({
         title: 'Login Successful',
-        description: 'Welcome back!',
+        description: 'Welcome back! Redirecting...',
       });
-
-      router.push(redirectTo);
 
     } catch (error: any) {
       toast({
@@ -88,7 +75,9 @@ export default function LoginPage() {
     }
   };
   
-  if (isUserLoading || isProfileLoading) { // simplified loading state
+  const isLoading = isUserLoading || (authUser && isProfileLoading);
+
+  if (isLoading) {
     return (
       <div className="container flex h-screen w-screen flex-col items-center justify-center">
         <p>Loading...</p>
@@ -96,9 +85,7 @@ export default function LoginPage() {
     );
   }
 
-  // If user is already logged in but profile is still loading, show loading.
-  // Otherwise if user is logged in, they will be redirected by the useEffect.
-  // If no user, show the login form.
+  // If user is logged in, they will be redirected by the useEffect. Show a message while that happens.
   if (authUser) {
      return (
       <div className="container flex h-screen w-screen flex-col items-center justify-center">
