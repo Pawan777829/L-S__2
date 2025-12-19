@@ -32,7 +32,18 @@ interface AddressFormProps {
 export function AddressForm({ onSubmit, defaultValues }: AddressFormProps) {
   const form = useForm<AddressSchema>({
     resolver: zodResolver(addressSchema),
-    defaultValues: defaultValues || { country: "India" },
+    defaultValues: {
+      fullName: defaultValues?.fullName || '',
+      mobile: defaultValues?.mobile || '',
+      pincode: defaultValues?.pincode || '',
+      addressLine1: defaultValues?.addressLine1 || '',
+      addressLine2: defaultValues?.addressLine2 || '',
+      landmark: defaultValues?.landmark || '',
+      city: defaultValues?.city || '',
+      state: defaultValues?.state || '',
+      country: defaultValues?.country || "India",
+      alternateMobile: defaultValues?.alternateMobile || '',
+    },
   });
 
   return (
@@ -140,6 +151,17 @@ export function AddressForm({ onSubmit, defaultValues }: AddressFormProps) {
               <FormMessage />
             </FormItem>
           )}
+        />
+        <FormField
+            control={form.control}
+            name="alternateMobile"
+            render={({ field }) => (
+                <FormItem>
+                <FormLabel>Alternate Mobile (Optional)</FormLabel>
+                <FormControl><Input placeholder="Alternate 10-digit number" {...field} /></FormControl>
+                <FormMessage />
+                </FormItem>
+            )}
         />
         <DialogFooter>
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
