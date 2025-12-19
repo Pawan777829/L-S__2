@@ -5,13 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import AuthenticatedRouteGuard from '@/components/auth/authenticated-route-guard';
-import { useCart } from '@/lib/cart-context';
+import { useCart, CartItem } from '@/lib/cart-context';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, doc, setDoc, addDoc } from 'firebase/firestore';
+import { collection, doc, addDoc } from 'firebase/firestore';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Home, PlusCircle } from 'lucide-react';
+import { Home, PlusCircle, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AddressForm, AddressSchema } from '@/components/shared/address-form';
 import { useToast } from '@/hooks/use-toast';
@@ -74,9 +75,11 @@ function CheckoutLoader() {
 function CheckoutPage() {
     const { user } = useUser();
     const firestore = useFirestore();
-    const { cartItems, cartTotal, cartCount, isLoading: isCartLoading } = useCart();
+    const router = useRouter();
+    const { cartItems, cartTotal, cartCount, clearCart, isLoading: isCartLoading } = useCart();
     const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
     const [isAddressDialogOpen, setAddressDialogOpen] = useState(false);
+    const [isPlacingOrder, setIsPlacingOrder] = useState(false);
     const { toast } = useToast();
 
     const addressesCollectionRef = useMemoFirebase(() => {
@@ -97,6 +100,57 @@ function CheckoutPage() {
         }
     };
     
+    const handlePlaceOrder = async () => {
+        if (!user || !selectedAddressId || !addresses || cartCount === 0) return;
+        
+        setIsPlacingOrder(true);
+
+        const selectedAddress = addresses.find(addr => addr.id === selectedAddressId);
+        if (!selectedAddress) {
+            toast({ variant: 'destructive', title: "Error", description: "Selected address not found." });
+            setIsPlacingOrder(false);
+            return;
+        }
+
+        const orderData = {
+            userId: user.uid,
+            shippingAddress: selectedAddress,
+            items: cartItems.map(item => ({ 
+                itemId: item.item.originalId,
+                variantId: item.item.variantId,
+                name: item.item.name,
+                price: item.item.price,
+                quantity: item.quantity,
+                type: item.type,
+             })),
+            total: cartTotal,
+            status: 'Processing',
+            date: new Date().toISOString(),
+        };
+
+        try {
+            const ordersCollectionRef = collection(firestore, 'users', user.uid, 'orders');
+            await addDoc(ordersCollectionRef, orderData);
+            
+            await clearCart();
+
+            toast({
+                title: "Order Placed!",
+                description: "Thank you for your purchase.",
+            });
+
+            router.push('/account/orders');
+
+        } catch (error: any) {
+            toast({
+                variant: 'destructive',
+                title: "Order Failed",
+                description: error.message || "Could not place your order.",
+            });
+             setIsPlacingOrder(false);
+        }
+    };
+
     if (isCartLoading || isAddressesLoading) {
         return <CheckoutLoader />;
     }
@@ -194,8 +248,8 @@ function CheckoutPage() {
                                 </div>
                             </CardContent>
                         </Card>
-                         <Button size="lg" className="w-full mt-6" disabled={!selectedAddressId || cartCount === 0}>
-                            Place Order
+                         <Button size="lg" className="w-full mt-6" disabled={!selectedAddressId || cartCount === 0 || isPlacingOrder} onClick={handlePlaceOrder}>
+                            {isPlacingOrder ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Placing Order...</> : 'Place Order'}
                         </Button>
                     </div>
                 </div>

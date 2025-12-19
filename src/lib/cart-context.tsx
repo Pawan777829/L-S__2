@@ -47,7 +47,7 @@ type CartContextType = {
   addToCart: (item: Product | Course, type: 'product' | 'course', quantity?: number, variant?: ProductVariant) => void;
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
-  clearCart: () => void;
+  clearCart: () => Promise<void>;
   cartCount: number;
   cartTotal: number;
   isLoading: boolean;
@@ -249,14 +249,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const clearCart = () => {
+  const clearCart = async () => {
     if (user && cartCollectionRef && firestore) {
       const batch = writeBatch(firestore);
-      combinedCart.forEach(item => {
-        const docRef = doc(cartCollectionRef, item.id);
-        batch.delete(docRef);
+      const querySnapshot = await getDocs(cartCollectionRef);
+      querySnapshot.forEach(doc => {
+          batch.delete(doc.ref);
       });
-      batch.commit();
+      await batch.commit();
     } else {
       setLocalCart([]);
     }

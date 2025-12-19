@@ -74,7 +74,7 @@ service cloud.firestore {
 
     match /users/{userId}/cart/{cartItemId} {
       allow read: if isSignedIn() && isOwner(userId);
-      allow write: if isSignedIn() && isOwner(userId) && isLearner(userId);
+      allow write: if isSignedIn() && isOwner(userId);
     }
     
     match /users/{userId}/addresses/{addressId} {
@@ -83,7 +83,8 @@ service cloud.firestore {
 
     match /users/{userId}/orders/{orderId} {
       allow read: if isSignedIn() && isOwner(userId);
-      allow create, update, delete: if false; // Orders managed by backend/functions
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
+      allow update, delete: if false; // Only allow order creation for now
     }
 
     match /users/{userId}/enrollments/{enrollmentId} {
